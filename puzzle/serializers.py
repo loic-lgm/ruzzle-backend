@@ -16,5 +16,4 @@ class PuzzleSerializer(serializers.ModelSerializer):
             "image_url",
             "status",
             "is_published",
-            "owner",
         ]

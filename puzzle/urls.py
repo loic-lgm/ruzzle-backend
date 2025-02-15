@@ -1,10 +1,12 @@
-from django.urls import path
-from rest_framework.urlpatterns import format_suffix_patterns
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
 from puzzle import views
 
 
+router = DefaultRouter()
+router.register("", views.PuzzleViewSet, basename="puzzle")
+
 urlpatterns = [
-    path("", views.PuzzleListViewSet.as_view()),
-    path("<int:pk>/", views.PuzzleDetailViewSet.as_view()),
+    path("", include(router.urls)),
 ]
