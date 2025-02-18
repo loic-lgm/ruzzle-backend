@@ -1,14 +1,14 @@
-from django.shortcuts import render
+from django.contrib.auth import get_user_model
+from user.serializers import UserSerializer
+from rest_framework import permissions, viewsets
 
-from user.serializers import UserRegistrationSerializer
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.decorators import api_view
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
 
-@api_view(['POST'])
-def register(request):
-    serializer = UserRegistrationSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get_permissions(self):
+        if self.action in ["list"]:
+            return [permissions.IsAdminUser]
+        elif self.action in ["create", "update", "partial_update"]:
+            return []
+        return super().get_permissions()
