@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from permissions import IsOwnerOrReadOnly
 from user.serializers import UserRegistrationSerializer, UserSerializer
 from rest_framework import mixins, permissions, viewsets
 from rest_framework import status
@@ -19,7 +20,7 @@ class UserViewSet(
 
     def get_permissions(self):
         if self.action in ["update", "partial_update"]:
-            return [permissions.IsAdminUser]
+            return [permissions.IsAdminUser, IsOwnerOrReadOnly]
         return super().get_permissions()
 
 
