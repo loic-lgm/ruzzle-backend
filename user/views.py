@@ -13,7 +13,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 class UserViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
-    viewsets.ModelViewSet,
+    viewsets.GenericViewSet,
 ):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
