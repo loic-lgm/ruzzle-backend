@@ -1,39 +1,38 @@
 from django.contrib.auth import get_user_model
 from user.serializers import UserRegistrationSerializer, UserSerializer
-from rest_framework import permissions, viewsets
+from rest_framework import mixins, permissions, viewsets
 from rest_framework import status
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.ModelViewSet,
+):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        if self.action in ["list"]:
-            # return [permissions.IsAdminUser]
-            return []
-        elif self.action in ["create", "update", "partial_update"]:
-            return []
+        if self.action in ["update", "partial_update"]:
+            return [permissions.IsAdminUser]
         return super().get_permissions()
 
-    @action(detail=False, methods=["POST"])
-    def logout(self, request):
-        try:
-            refresh_token = request.data.get("refresh")
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response(
-                {"message": "Déconnexion réussie"}, status=status.HTTP_200_OK
-            )
-        except Exception:
-            return Response(
-                {"error": "Token invalide"}, status=status.HTTP_400_BAD_REQUEST
-            )
+
+@api_view(["POST"])
+@permission_classes([permissions.IsAuthenticated])
+def logout(request):
+    try:
+        refresh_token = request.data.get("refresh")
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+        return Response({"message": "Déconnexion réussie"}, status=status.HTTP_200_OK)
+    except Exception:
+        return Response({"error": "Token invalide"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
