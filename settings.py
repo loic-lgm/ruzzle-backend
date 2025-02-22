@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "puzzle",
     "exchange",
     "rate",
+    "favorite",
 ]
 
 MIDDLEWARE = [

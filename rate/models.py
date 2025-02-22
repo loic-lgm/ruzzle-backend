@@ -8,7 +8,7 @@ class Rate(models.Model):
     """
     Represents an user rating.
     """
-    
+
     rating = models.IntegerField()
     comment = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)
@@ -20,4 +20,4 @@ class Rate(models.Model):
         ordering = ["-created"]
 
     def __str__(self):
-        return self.rating
+        return str(self.rating)
