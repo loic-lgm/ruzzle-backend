@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "user",
     "puzzle",
     "exchange",
+    "rate",
 ]
 
 MIDDLEWARE = [
