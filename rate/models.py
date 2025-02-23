@@ -12,9 +12,9 @@ class Rate(models.Model):
     rating = models.IntegerField()
     comment = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True)
-    reviewer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviewer")
-    reviewed = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviewed")
-    exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE, related_name="exchanges")
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="rates_given")
+    reviewed = models.ForeignKey(User, on_delete=models.CASCADE, related_name="rates_received")
+    exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ["-created"]

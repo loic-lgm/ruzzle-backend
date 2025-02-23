@@ -19,8 +19,7 @@ class Exchange(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="exchanges")
-    requester = models.ForeignKey(User, on_delete=models.CASCADE, related_name="exchanges_requested")
-    puzzle = models.ForeignKey(Puzzle, on_delete=models.CASCADE, related_name="puzzles")
+    puzzle = models.ForeignKey(Puzzle, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ["-created"]
