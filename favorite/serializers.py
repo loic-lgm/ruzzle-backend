@@ -11,4 +11,15 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Rate
-        fields = ["id", "owner", "puzlle"]
+        fields = ["id", "owner", "puzzle"]
+
+    def validate(self, data):
+        owner = data.get("owner")
+        user = self.context["request"].user
+
+        if owner and owner == user:
+            raise serializers.ValidationError(
+                "Vous ne pouvez pas ajouter votre puzzle en favoris."
+            )
+
+        return data

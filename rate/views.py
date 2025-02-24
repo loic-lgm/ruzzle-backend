@@ -10,8 +10,8 @@ class RateViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_permissions(self):
-        if self.action in ["update", "partial_update"]:
-            return [permissions.IsAdminUser, IsOwnerOrReadOnly]
+        if self.action in ["update", "partial_update", "destroy"]:
+            return [permissions.IsAdminUser]
         return super().get_permissions()
 
     def perform_create(self, serializer):

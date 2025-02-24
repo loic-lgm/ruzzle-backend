@@ -10,7 +10,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_permissions(self):
-        if self.action in ["update", "partial_update"]:
+        if self.action in ["update", "partial_update", "destroy"]:
             return [permissions.IsAdminUser, IsOwnerOrReadOnly]
         return super().get_permissions()
 
