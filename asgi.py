@@ -1,5 +1,5 @@
 """
-ASGI config for puzzle_swap project.
+ASGI config for ruzzle project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

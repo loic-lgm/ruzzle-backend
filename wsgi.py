@@ -1,5 +1,5 @@
 """
-WSGI config for puzzle_swap project.
+WSGI config for ruzzle project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
