@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from permissions import IsOwnerOrReadOnly
+from permissions import IsOwner
 from user.serializers import UserRegistrationSerializer, UserSerializer
 from rest_framework import mixins, permissions, viewsets
 from rest_framework import status
@@ -13,14 +13,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 class UserViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        if self.action in ["update", "partial_update"]:
-            return [permissions.IsAdminUser, IsOwnerOrReadOnly]
+        if self.action in ["update"]:
+            return [permissions.IsAdminUser, IsOwner]
         return super().get_permissions()
 
 
