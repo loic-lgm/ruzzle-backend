@@ -13,3 +13,12 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             return True
 
         return obj.owner == request.user or obj.reviewer == request.user
+
+
+class IsOwner(permissions.BasePermission):
+    """
+    Custom permission to only allow owners of an object to edit and read it.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        return obj.owner == request.user or obj.reviewer == request.user
