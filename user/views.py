@@ -21,7 +21,7 @@ class UserViewSet(
 
     def get_permissions(self):
         if self.action in ["update"]:
-            return [permissions.IsAdminUser, IsOwner]
+            return [permissions.IsAdminUser(), IsOwner()]
         return super().get_permissions()
 
 

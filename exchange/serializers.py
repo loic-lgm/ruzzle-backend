@@ -6,7 +6,7 @@ from user.serializers import UserSerializer
 
 
 class ExchangeSerializer(serializers.ModelSerializer):
-    owner = UserSerializer()
+    owner = UserSerializer(read_only=True)
     puzzle_asked = PuzzleSerializer(read_only=True)
 
     class Meta:
@@ -24,7 +24,7 @@ class ExchangeSerializer(serializers.ModelSerializer):
     def validate(self, data):
         puzzle_asked = data.get("puzzle_asked")
         puzzle_proposed = data.get("puzzle_proposed")
-        owner = data.get("owner")
+        owner = puzzle_asked.owner
         user = self.context["request"].user
 
         if puzzle_asked and puzzle_asked.owner == user:
