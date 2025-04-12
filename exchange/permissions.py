@@ -1,10 +1,13 @@
 from rest_framework import permissions
 
 
-class IsExchangeRequested(permissions.BasePermission):
+class IsExchangeRequestedOrRequester(permissions.BasePermission):
     """
-    Custom permission for the user to whom an exchange has been proposed
+    Personalized authorization for the user to whom an exchange
+    has been proposed or who has proposed an exchange
     """
 
     def has_object_permission(self, request, view, obj):
-        return obj.puzzle_asked.owner == request.user
+        return obj.puzzle_asked.owner == request.user or (
+            obj.puzzle_proposed.owner and obj.puzzle_proposed.owner == request.user
+        )

@@ -6,35 +6,34 @@ from user.serializers import UserSerializer
 
 
 class ExchangeSerializer(serializers.ModelSerializer):
-    owner = UserSerializer(read_only=True)
     puzzle_asked = PuzzleSerializer(read_only=True)
+    puzzle_proposed = PuzzleSerializer(read_only=True)
+    puzzle_asked_id = serializers.IntegerField(write_only=True, required=True)
+    puzzle_proposed_id = serializers.IntegerField(write_only=True, required=False)
 
     class Meta:
         model = Exchange
         fields = [
-            "id",
             "status",
-            "owner",
-            "created",
-            "updated",
             "puzzle_asked",
             "puzzle_proposed",
+            "puzzle_asked_id",
+            "puzzle_proposed_id",
         ]
 
     def validate(self, data):
-        puzzle_asked = data.get("puzzle_asked")
-        puzzle_proposed = data.get("puzzle_proposed")
-        owner = puzzle_asked.owner
-        user = self.context["request"].user
+        if self.instance:
+            return data
 
-        if puzzle_asked and puzzle_asked.owner == user:
-            raise serializers.ValidationError(
-                "Vous ne pouvez pas échanger un puzzle dont vous êtes déjà propriétaire."
-            )
+        puzzle_asked_id = data.get("puzzle_asked_id")
+        puzzle_proposed_id = data.get("puzzle_proposed_id")
 
-        if puzzle_proposed and puzzle_proposed.owner != owner:
-            raise serializers.ValidationError(
-                f"Vous ne pouvez proposer à l'échange qu'un puzzle appartenant à {owner.username}"
-            )
+        if puzzle_asked_id and puzzle_proposed_id:
+            already_exists = Exchange.objects.filter(
+                puzzle_asked_id=puzzle_asked_id, puzzle_proposed_id=puzzle_proposed_id
+            ).exists()
 
-        return data
+            if already_exists:
+                raise serializers.ValidationError(
+                    "Un échange avec ces puzzles existe déjà."
+                )
