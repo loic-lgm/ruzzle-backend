@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from exchange.models import Exchange
 from puzzle.serializers import PuzzleSerializer
-from user.serializers import UserSerializer
 
 
 class ExchangeSerializer(serializers.ModelSerializer):
