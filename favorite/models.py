@@ -17,4 +17,4 @@ class Favorite(models.Model):
         ordering = ["-created"]
 
     def __str__(self):
-        return f"Favorite: {self.owner.username} - Puzzle {self.puzzle.id}"
+        return f"Favorite: {self.owner.username} - Puzzle {self.puzzle.name}"
