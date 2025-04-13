@@ -14,6 +14,7 @@ class ExchangeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exchange
         fields = [
+            "created",
             "status",
             "puzzle_asked",
             "puzzle_proposed",
