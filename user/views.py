@@ -40,16 +40,16 @@ def logout(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def login(request):
-    username = request.data.get("username")
     password = request.data.get("password")
+    email = request.data.get("email")
 
-    if not username or not password:
+    if not email or not password:
         return Response(
-            {"error": "Veuillez fournir un nom d'utilisateur et un mot de passe"},
+            {"error": "Veuillez fournir un email et un mot de passe"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    user = authenticate(username=username, password=password)
+    user = authenticate(email=email, password=password)
 
     if user is not None:
         refresh = RefreshToken.for_user(user)
@@ -63,7 +63,7 @@ def login(request):
         )
     else:
         return Response(
-            {"error": "Identifiants invalides"}, status=status.HTTP_401_UNAUTHORIZED
+            {"error": "Identifiants invalides"}, status=status.HTTP_400_BAD_REQUEST
         )
 
 
