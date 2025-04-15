@@ -1,17 +1,16 @@
-from django.contrib.auth import get_user_model
-from permissions import IsOwner
-from user.serializers import UserRegistrationSerializer, UserSerializer
-from rest_framework import mixins, permissions, viewsets
-from rest_framework import status
+from django.contrib.auth import authenticate, get_user_model
+
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from django.contrib.auth import authenticate
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from user.serializers import UserRegistrationSerializer, UserSerializer
 
 
 class UserViewSet(
-    mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
@@ -21,7 +20,13 @@ class UserViewSet(
 
     def get_permissions(self):
         if self.action in ["update"]:
-            return [permissions.IsAdminUser(), IsOwner()]
+            user_id = self.kwargs.get("pk")
+            if str(self.request.user.id) != user_id:
+                raise PermissionDenied(
+                    "Vous ne pouvez modifier que votre propre profil."
+                )
+            return [IsAuthenticated()]
+
         return super().get_permissions()
 
 
