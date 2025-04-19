@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "exchange",
     "rate",
     "favorite",
+    "city",
 ]
 
 MIDDLEWARE = [

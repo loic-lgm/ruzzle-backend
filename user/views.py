@@ -54,7 +54,7 @@ def login(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    user = authenticate(email=email, password=password)
+    user = authenticate(username=email, password=password)
 
     if user is not None:
         refresh = RefreshToken.for_user(user)
