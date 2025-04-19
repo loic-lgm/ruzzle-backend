@@ -7,21 +7,15 @@ from city.serializers import CitySerializer
 
 class UserSerializer(serializers.ModelSerializer):
     city = CitySerializer(read_only=True)
+
     class Meta:
         model = get_user_model()
-        fields = [
-            "id",
-            "username",
-            "email",
-            "first_name",
-            "last_name",
-            "image",
-            "city"
-        ]
+        fields = ["id", "username", "email", "first_name", "last_name", "image", "city"]
 
 
-class UserRegistrationSerializer(serializers.ModelSerializer, UserSerializer):
+class UserRegistrationSerializer(UserSerializer):
     city_id = serializers.IntegerField(write_only=True, required=False)
+
     class Meta:
         model = get_user_model()
         fields = [
