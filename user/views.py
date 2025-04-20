@@ -1,12 +1,15 @@
 from django.contrib.auth import authenticate, get_user_model
 
 from rest_framework import mixins, permissions, status, viewsets
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from favorite.models import Favorite
+from favorite.serializers import FavoriteSerializer
+from permissions import IsOwnerParam
 from user.serializers import UserRegistrationSerializer, UserSerializer
 
 
@@ -28,6 +31,14 @@ class UserViewSet(
             return [IsAuthenticated()]
 
         return super().get_permissions()
+
+
+    @action(detail=True, methods=["get"], permission_classes=[IsOwnerParam])
+    def favorites(self, request, pk=None):
+        user = self.get_object()
+        favorites = Favorite.objects.filter(owner=user)
+        serializer = FavoriteSerializer(favorites, many=True)
+        return Response(serializer.data)
 
 
 @api_view(["POST"])

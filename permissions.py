@@ -29,7 +29,6 @@ class IsOwnerOrIsAdminOrReadOnly(permissions.BasePermission):
         return obj.owner == request.user or request.user.is_staff
 
 
-
 class IsOwner(permissions.BasePermission):
     """
     Custom permission to only allow owners of an object to edit and read it.
@@ -37,3 +36,12 @@ class IsOwner(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return obj.owner == request.user
+
+
+class IsOwnerParam(permissions.BasePermission):
+    """
+    Custom permission to only allow owners of an object to edit and read it.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        return view.kwargs.get("pk") == str(request.user.id)
