@@ -1,8 +1,8 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 
 from brand.models import Brand
+from category.models import Category
 from user.models import User
 
 
@@ -32,6 +32,7 @@ class Puzzle(models.Model):
     is_published = models.BooleanField(default=False)
     created = models.DateTimeField(default=timezone.now)
     brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name="puzzles", null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="puzzles", null=True, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="puzzles")
 
     class Meta:
