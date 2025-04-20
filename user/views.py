@@ -7,6 +7,8 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from exchange.models import Exchange
+from exchange.serializers import ExchangeSerializer
 from favorite.models import Favorite
 from favorite.serializers import FavoriteSerializer
 from permissions import IsOwnerParam
@@ -32,12 +34,25 @@ class UserViewSet(
 
         return super().get_permissions()
 
-
     @action(detail=True, methods=["get"], permission_classes=[IsOwnerParam])
     def favorites(self, request, pk=None):
         user = self.get_object()
         favorites = Favorite.objects.filter(owner=user)
         serializer = FavoriteSerializer(favorites, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["get"], permission_classes=[IsOwnerParam], url_path="requested-exchanges")
+    def requested_exchange(self, request, pk=None):
+        user = self.get_object()
+        exchanges = Exchange.objects.filter(owner=user)
+        serializer = ExchangeSerializer(exchanges, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["get"], permission_classes=[IsOwnerParam], url_path="requester-exchanges")
+    def requester_exchange(self, request, pk=None):
+        user = self.get_object()
+        exchanges = Exchange.objects.filter(requester=user)
+        serializer = ExchangeSerializer(exchanges, many=True)
         return Response(serializer.data)
 
 
