@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from apps.city.models import City
 from apps.city.serializers import CitySerializer
+from apps.utils.validations import validate_image
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -30,6 +31,9 @@ class UserRegistrationSerializer(UserSerializer):
             "city_id",
         ]
         extra_kwargs = {"password": {"write_only": True}}
+
+    def validate_image(self, value):
+        return validate_image(value, serializers=self)
 
     def create(self, validated_data):
         username = validated_data["username"]

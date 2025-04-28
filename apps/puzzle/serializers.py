@@ -5,6 +5,7 @@ from apps.brand.models import Brand
 from apps.brand.serializers import BrandSerializer
 from apps.puzzle.models import Puzzle
 from apps.user.serializers import UserSerializer
+from apps.utils.validations import validate_image
 
 
 class PuzzleSerializer(serializers.ModelSerializer):
@@ -31,6 +32,9 @@ class PuzzleSerializer(serializers.ModelSerializer):
             "is_published",
             "owner",
         ]
+
+    def validate_image(self, value):
+        return validate_image(value, serializers=self)
 
     def create(self, validated_data):
         brand_id = validated_data.pop("brand_id")
