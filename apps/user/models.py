@@ -12,7 +12,7 @@ class User(AbstractUser):
 
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(max_length=100, unique=True)
-    image = models.URLField(blank=True, null=True, max_length=255)
+    image = models.ImageField(upload_to="user_images/", blank=True, null=True, max_length=255)
     created_at = models.DateTimeField(default=timezone.now)
     city = models.ForeignKey(
         City, on_delete=models.PROTECT, related_name="users", null=True, blank=True
