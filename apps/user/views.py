@@ -62,9 +62,12 @@ def logout(request):
     try:
         refresh_token = request.data.get("refresh")
         token = RefreshToken(refresh_token)
-        token.blacklist()
-        return Response({"message": "Déconnexion réussie"}, status=status.HTTP_200_OK)
-    except Exception:
+        token.blacklist() 
+        response = Response({"message": "Déconnexion réussie"}, status=status.HTTP_200_OK)
+        response.delete_cookie('access_token')
+        response.delete_cookie('refresh_token')
+        return response
+    except Exception as e:
         return Response({"error": "Token invalide"}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -82,19 +85,68 @@ def login(request):
 
     user = authenticate(username=email, password=password)
 
-    if user is not None:
-        refresh = RefreshToken.for_user(user)
-        serializer = UserSerializer(user)
+    if user is None:
+        return Response({"error": "Identifiants invalides"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
+
+    response = Response({"message": "Connexion réussie"}, status=status.HTTP_200_OK)
+
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=False,  # True HTTPS
+        samesite="Lax",
+        max_age=3600,
+        path="/",
+    )
+
+    response.set_cookie(
+        key="refresh_token",
+        value=str(refresh),
+        httponly=True,
+        secure=False,  # True HTTPS only
+        samesite="Lax",
+        max_age=3600 * 24 * 7,
+        path="/",
+    )
+
+    return response
+
+
+@api_view(["POST"])
+def refresh(request):
+    refresh_token = request.COOKIES.get("refresh_token")
+    
+    if not refresh_token:
         return Response(
-            {
-                "refresh": str(refresh),
-                "access": str(refresh.access_token),
-                "user": serializer.data,
-            }
+            {"error": "Refresh token non trouvé dans les cookies."},
+            status=status.HTTP_400_BAD_REQUEST,
         )
-    else:
+
+    try:
+        refresh = RefreshToken(refresh_token)
+        access_token = str(refresh.access_token)
+        response = Response(
+            {"message": "Access token renouvelé."}, status=status.HTTP_200_OK
+        )
+        response.set_cookie(
+            key="access_token",
+            value=access_token,
+            httponly=True,
+            secure=False, # True HTTPS only
+            samesite="Lax",
+            max_age=3600,
+            path="/",
+        )
+        return response
+
+    except Exception as e:
         return Response(
-            {"error": "Identifiants invalides"}, status=status.HTTP_400_BAD_REQUEST
+            {"error": "Le refresh token est invalide ou a expiré."},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
 
