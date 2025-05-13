@@ -6,11 +6,14 @@ from apps.city.serializers import CitySerializer
 from apps.utils.validations import validate_image
 
 
+User = get_user_model()
+
+
 class UserSerializer(serializers.ModelSerializer):
     city = CitySerializer(read_only=True)
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = ["id", "username", "email", "first_name", "last_name", "image", "city"]
 
 
@@ -18,7 +21,7 @@ class UserRegistrationSerializer(UserSerializer):
     city_id = serializers.IntegerField(write_only=True, required=False)
 
     class Meta:
-        model = get_user_model()
+        model = User
         fields = [
             "id",
             "username",
@@ -30,7 +33,23 @@ class UserRegistrationSerializer(UserSerializer):
             "city",
             "city_id",
         ]
-        extra_kwargs = {"password": {"write_only": True}}
+        extra_kwargs = {
+            "password": {"write_only": True},
+            "email": {"validators": []},
+            "username": {"validators": []},
+        }
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError(
+                "Un utilisateur avec cet email existe déjà."
+            )
+        return value
+
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Ce nom d'utilisateur est déjà utilisé.")
+        return value
 
     def validate_image(self, value):
         return validate_image(value, serializers=self)
@@ -50,7 +69,6 @@ class UserRegistrationSerializer(UserSerializer):
                     {"city_id": "La ville spécifiée n'existe pas."}
                 )
 
-        User = get_user_model()
         new_user = User.objects.create(email=email, username=username, city=city)
         new_user.set_password(password)
         new_user.save()
