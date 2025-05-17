@@ -1,8 +1,24 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
 
 from apps.city.models import City
+
+
+class CustomUserManager(BaseUserManager):
+    def create_superuser(self, email, password=None, **extra_fields):
+        """
+        Crée et renvoie un superutilisateur avec un email.
+        """
+        if not email:
+            raise ValueError('Le superutilisateur doit avoir un email')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
 
 
 class User(AbstractUser):
@@ -17,6 +33,8 @@ class User(AbstractUser):
     city = models.ForeignKey(
         City, on_delete=models.PROTECT, related_name="users", null=True, blank=True
     )
+
+    objects = CustomUserManager()
 
 
     USERNAME_FIELD = "email"
