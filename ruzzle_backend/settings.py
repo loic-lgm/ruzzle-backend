@@ -164,6 +164,7 @@ AUTHENTICATION_BACKENDS = ["apps.user.backend.EmailBackend"]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        "apps.utils.authentication.CookieJWTAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     )
 }

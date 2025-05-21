@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, get_user_model
 
 from rest_framework import mixins, permissions, status, viewsets
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action, api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -11,6 +11,7 @@ from apps.exchange.models import Exchange
 from apps.exchange.serializers import ExchangeSerializer
 from apps.favorite.models import Favorite
 from apps.favorite.serializers import FavoriteSerializer
+from apps.utils.authentication import CookieJWTAuthentication
 from apps.utils.permissions import IsOwnerParam
 from apps.user.serializers import UserRegistrationSerializer, UserSerializer
 
@@ -97,8 +98,8 @@ def login(request):
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=False,  # True HTTPS
-        samesite="Lax",
+        secure=True,  # True HTTPS
+        samesite="None",
         max_age=3600,
         path="/",
     )
@@ -107,8 +108,8 @@ def login(request):
         key="refresh_token",
         value=str(refresh),
         httponly=True,
-        secure=False,  # True HTTPS only
-        samesite="Lax",
+        secure=True,  # True HTTPS only
+        samesite="None",
         max_age=3600 * 24 * 7,
         path="/",
     )
@@ -123,7 +124,7 @@ def refresh(request):
     if not refresh_token:
         return Response(
             {"error": "Refresh token non trouvé dans les cookies."},
-            status=status.HTTP_400_BAD_REQUEST,
+            status=status.HTTP_401_UNAUTHORIZED,
         )
 
     try:
@@ -146,7 +147,7 @@ def refresh(request):
     except Exception as e:
         return Response(
             {"error": "Le refresh token est invalide ou a expiré."},
-            status=status.HTTP_400_BAD_REQUEST,
+            status=status.HTTP_401_UNAUTHORIZED,
         )
 
 
@@ -157,3 +158,13 @@ def register(request):
         serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
+@authentication_classes([CookieJWTAuthentication])
+@permission_classes([IsAuthenticated])
+def me(request):
+    if not request.user or request.user.is_anonymous:
+        return Response({"error": "Non authentifié"}, status=401)
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data, status=200)

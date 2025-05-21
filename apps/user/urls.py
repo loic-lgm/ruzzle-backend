@@ -7,6 +7,7 @@ router = DefaultRouter()
 router.register("", views.UserViewSet, basename="user")
 
 urlpatterns = [
+    path("me/", views.me, name="me"),
     path("login/", views.login, name="login"),
     path("logout/", views.logout, name="logout"),
     path("refresh/", views.refresh, name="refresh"),
