@@ -35,22 +35,22 @@ INSERT INTO puzzle_puzzle (
     created, brand_id, category_id, owner_id, image
 )
 VALUES
-    (1, 'Montagne enneigée', 1000, 'Puzzle hivernal très relaxant.', 'new', 'available', TRUE, NOW(), 1, 1, 3, 'puzzle_images/montagne_enneigee.jpg'),
-    (2, 'Le Cri - Munch', 500, 'Reproduction du célèbre tableau.', 'used', 'available', TRUE, NOW(), 2, 2, 6, 'puzzle_images/le_cri_munch.jpg'),
-    (3, 'Chats rigolos', 750, 'Puzzle amusant avec des chats en costume.', 'used', 'swap', TRUE, NOW(), 3, 3, 7, 'puzzle_images/chats_rigolos.jpg'),
-    (4, 'Plage au coucher du soleil', 1000, 'Très belle scène tropicale.', 'new', 'available', TRUE, NOW(), 1, 1, 6, 'puzzle_images/plage_coucher_soleil.jpg');
+    (1, 'Montagne enneigée', 1000, 'Puzzle hivernal très relaxant.', 'new', 'available', TRUE, NOW(), 1, 1, 2, 'puzzle_images/montagne_enneigee.jpg'),
+    (2, 'Le Cri - Munch', 500, 'Reproduction du célèbre tableau.', 'used', 'available', TRUE, NOW(), 2, 2, 3, 'puzzle_images/le_cri_munch.jpg'),
+    (3, 'Chats rigolos', 750, 'Puzzle amusant avec des chats en costume.', 'used', 'swap', TRUE, NOW(), 3, 3, 6, 'puzzle_images/chats_rigolos.jpg'),
+    (4, 'Plage au coucher du soleil', 1000, 'Très belle scène tropicale.', 'new', 'available', TRUE, NOW(), 1, 1, 2, 'puzzle_images/plage_coucher_soleil.jpg');
 
 INSERT INTO favorite_favorite (id, created, puzzle_id, owner_id) VALUES
-    (1, NOW(), 1, 6),
-    (2, NOW(), 2, 3),
+    (1, NOW(), 1, 3),
+    (2, NOW(), 2, 2),
     (3, NOW(), 3, 3),
-    (4, NOW(), 4, 7);
+    (4, NOW(), 4, 6);
 
 INSERT INTO exchange_exchange (
     id, status, created, updated, owner_id, requester_id,
     puzzle_asked_id, puzzle_proposed_id
 )
 VALUES
-    (1, 'pending', NOW(), NOW(), 6, 3, 2, 1),
-    (2, 'accepted', NOW(), NOW(), 3, 7, 1, 3),
-    (3, 'denied', NOW(), NOW(), 7, 6, 3, 4);
+    (1, 'pending', NOW(), NOW(), 6, 2, 3, 4),
+    (2, 'accepted', NOW(), NOW(), 3, 6, 2, 3),
+    (3, 'denied', NOW(), NOW(), 2, 3, 1, 2);
