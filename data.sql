@@ -45,9 +45,11 @@ DECLARE
     brand_ids INT[] := ARRAY[1,2,3];
     category_ids INT[] := ARRAY[1,2,3,4,5,6,7];
     owner_id INT;
+    image_index INT;
 BEGIN
     FOR i IN 1..500 LOOP
         owner_id := owner_ids[(i % array_length(owner_ids, 1)) + 1];
+        image_index := ((i - 1) % 5) + 1;  -- Cycle de 1 à 5
         INSERT INTO puzzle_puzzle (
             name, piece_count, description, condition, status, is_published,
             created, brand_id, category_id, owner_id, image
@@ -66,7 +68,7 @@ BEGIN
             brand_ids[(random() * 2 + 1)::int],
             category_ids[(random() * 6 + 1)::int],
             owner_id,
-            'puzzle_images/puzzle_' || i || '.jpg'
+            'puzzle_images/' || image_index || '.jpg'
         );
     END LOOP;
 END $$;
