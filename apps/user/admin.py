@@ -3,7 +3,14 @@ from django.contrib.auth.admin import UserAdmin
 
 from apps.user.models import User
 
-class UserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'image', 'is_staff', 'is_active', 'created_at')
+class CustomUserAdmin(UserAdmin):
+    list_display = ('username', 'email', 'image', 'city', 'is_staff', 'is_active', 'created_at')
+    fieldsets = UserAdmin.fieldsets + (
+        ("Informations supplémentaires", {"fields": ("image", "city")}),
+    )
 
-admin.site.register(User, UserAdmin)
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        ("Informations supplémentaires", {"fields": ("image", "city")}),
+    )
+
+admin.site.register(User, CustomUserAdmin)
