@@ -8,9 +8,8 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
         ("Informations supplémentaires", {"fields": ("image", "city")}),
     )
-
     add_fieldsets = UserAdmin.add_fieldsets + (
-        ("Informations supplémentaires", {"fields": ("image", "city")}),
+        ("Informations supplémentaires", {"fields": ("image", "city", "email")}),
     )
 
 admin.site.register(User, CustomUserAdmin)
