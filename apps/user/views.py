@@ -137,8 +137,8 @@ def refresh(request):
             key="access_token",
             value=access_token,
             httponly=True,
-            secure=False, # True HTTPS only
-            samesite="Lax",
+            secure=True, # True HTTPS only
+            samesite="None",
             max_age=3600,
             path="/",
         )
