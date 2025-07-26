@@ -9,7 +9,10 @@ def process_image(
     max_height=1000,
     max_size=2 * 1024 * 1024,
     allowed_formats=["JPEG", "PNG"],
-):
+):  
+    if not image_file:
+        return None
+    
     if image_file.size > max_size:
         raise ValueError(
             "La taille de l'image ne doit pas dépasser 2MB."
