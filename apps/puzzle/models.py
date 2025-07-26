@@ -1,3 +1,4 @@
+from ast import Try
 from django.db import models
 from django.utils import timezone
 
@@ -23,9 +24,9 @@ class Puzzle(models.Model):
         ("swap", "swap"),
     ]
 
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=True, null=True)
     piece_count = models.IntegerField()
-    description = models.TextField(max_length=3000)
+    description = models.TextField(max_length=3000, blank=True, null=True)
     condition = models.CharField(choices=CONDITION_CHOICES)
     image = models.ImageField(upload_to="puzzle_images/", blank=True, null=True)
     status = models.CharField(choices=STATUS_CHOICES, default="available")
