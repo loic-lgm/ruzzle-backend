@@ -14,6 +14,7 @@ class PuzzleSerializer(serializers.ModelSerializer):
     category_id = serializers.IntegerField(write_only=True)
     brand = BrandSerializer(read_only=True)
     brand_id = serializers.IntegerField(write_only=True)
+    hashid = serializers.ReadOnlyField()
 
     class Meta:
         model = Puzzle
@@ -31,6 +32,7 @@ class PuzzleSerializer(serializers.ModelSerializer):
             "status",
             "is_published",
             "owner",
+            "hashid"
         ]
 
     def validate_image(self, value):

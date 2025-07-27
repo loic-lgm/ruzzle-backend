@@ -2,12 +2,17 @@ import random
 
 from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from apps.category.models import Category
 from apps.utils.permissions import IsOwnerOrIsAdminOrReadOnly
 from apps.puzzle.models import Puzzle
 from apps.puzzle.serializers import PuzzleSerializer
+
+from hashids import Hashids
+
+hashids = Hashids(min_length=6, salt="ruzzlepuzzle")
 
 
 class PuzzleViewSet(viewsets.ModelViewSet):
@@ -27,6 +32,17 @@ class PuzzleViewSet(viewsets.ModelViewSet):
         if city_name:
             queryset = queryset.filter(owner__city__name__iexact=city_name)
         return queryset
+
+    def get_object(self):
+        """Get a puzzle via its hashid instead of id."""
+        hashid = self.kwargs.get("pk")
+        decoded = hashids.decode(hashid)
+        if not decoded:
+            raise NotFound("Puzzle introuvable")
+        try:
+            return Puzzle.objects.get(id=decoded[0])
+        except Puzzle.DoesNotExist:
+            raise NotFound("Puzzle introuvable")
 
     def get_permissions(self):
         if self.action in ["update", "partial_update", "destroy"]:

@@ -11,6 +11,7 @@ python-dotenv = "*"
 djangorestframework-simplejwt = "*"
 pillow = "*"
 django-cors-headers = "*"
+hashids = "*"
 
 [dev-packages]
 

@@ -6,6 +6,10 @@ from apps.brand.models import Brand
 from apps.category.models import Category
 from apps.user.models import User
 
+from hashids import Hashids
+
+hashids = Hashids(min_length=6, salt="ruzzlepuzzle")
+
 
 class Puzzle(models.Model):
     """
@@ -35,6 +39,10 @@ class Puzzle(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name="puzzles", null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="puzzles", null=True, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="puzzles")
+
+    @property
+    def hashid(self):
+        return hashids.encode(self.id)
 
     class Meta:
         ordering = ["-created"]
