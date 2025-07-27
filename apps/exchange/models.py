@@ -19,6 +19,7 @@ class Exchange(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="exchanges")
+    message = models.CharField(max_length=500, null=True, blank=True)
     puzzle_asked = models.ForeignKey(
         Puzzle, on_delete=models.CASCADE, related_name="exchanges_asked"
     )

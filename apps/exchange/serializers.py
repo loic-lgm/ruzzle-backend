@@ -19,6 +19,7 @@ class ExchangeSerializer(serializers.ModelSerializer):
             "puzzle_proposed",
             "puzzle_asked_id",
             "puzzle_proposed_id",
+            "message",
         ]
 
     def validate(self, data):
