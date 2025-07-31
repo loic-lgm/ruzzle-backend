@@ -68,4 +68,12 @@ class PuzzleViewSet(viewsets.ModelViewSet):
                 }
             )
 
+    @action(
+        detail=False, methods=["get"], permission_classes=[permissions.IsAuthenticated]
+    )
+    def mine(self, request):
+        puzzles = self.queryset.filter(owner=request.user)
+        serializer = self.get_serializer(puzzles, many=True)
+        return Response(serializer.data)
+
         return Response(result)
