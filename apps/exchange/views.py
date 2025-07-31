@@ -18,16 +18,15 @@ class ExchangeViewSet(
     serializer_class = ExchangeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-
     def get_permissions(self):
         if self.action in ["retrieve", "update"]:
             return [IsExchangeRequestedOrRequester()]
         return super().get_permissions()
-    
 
     def create(self, request, *args, **kwargs):
         puzzle_asked_id = request.data.get("puzzle_asked_id")
         puzzle_proposed_id = request.data.get("puzzle_proposed_id")
+        message = request.data.get("message")
 
         if not puzzle_asked_id:
             raise ValidationError({"error": "Vous devez demander un puzzle."})
@@ -72,6 +71,7 @@ class ExchangeViewSet(
             owner=puzzle_asked.owner,
             puzzle_asked=puzzle_asked,
             puzzle_proposed=puzzle_proposed,
+            message=message,
         )
 
         return Response(

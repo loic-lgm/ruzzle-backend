@@ -9,6 +9,7 @@ class ExchangeSerializer(serializers.ModelSerializer):
     puzzle_proposed = PuzzleSerializer(read_only=True)
     puzzle_asked_id = serializers.IntegerField(write_only=True, required=True)
     puzzle_proposed_id = serializers.IntegerField(write_only=True, required=False)
+    message = serializers.CharField(required=False)
 
     class Meta:
         model = Exchange
@@ -38,3 +39,4 @@ class ExchangeSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Un échange avec ces puzzles existe déjà."
                 )
+        return data
