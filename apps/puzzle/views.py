@@ -31,6 +31,9 @@ class PuzzleViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(brand_id=brand_id)
         if city_name:
             queryset = queryset.filter(owner__city__name__iexact=city_name)
+        user = self.request.user
+        if user.is_authenticated:
+            queryset = queryset.exclude(owner=user)
         return queryset
 
     def get_object(self):
