@@ -14,6 +14,7 @@ class ExchangeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exchange
         fields = [
+            "id",
             "created",
             "status",
             "puzzle_asked",
@@ -21,6 +22,7 @@ class ExchangeSerializer(serializers.ModelSerializer):
             "puzzle_asked_id",
             "puzzle_proposed_id",
             "message",
+            "requester",
         ]
 
     def validate(self, data):

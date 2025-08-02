@@ -1,7 +1,14 @@
 from django.contrib.auth import authenticate, get_user_model
+from django.db.models import Q
+
 
 from rest_framework import mixins, permissions, status, viewsets
-from rest_framework.decorators import action, api_view, authentication_classes, permission_classes
+from rest_framework.decorators import (
+    action,
+    api_view,
+    authentication_classes,
+    permission_classes,
+)
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -42,17 +49,42 @@ class UserViewSet(
         serializer = FavoriteSerializer(favorites, many=True)
         return Response(serializer.data)
 
-    @action(detail=True, methods=["get"], permission_classes=[IsOwnerParam], url_path="requested-exchanges")
+    @action(
+        detail=True,
+        methods=["get"],
+        permission_classes=[IsOwnerParam],
+        url_path="requested-exchanges",
+    )
     def requested_exchange(self, request, pk=None):
         user = self.get_object()
         exchanges = Exchange.objects.filter(owner=user)
         serializer = ExchangeSerializer(exchanges, many=True)
         return Response(serializer.data)
 
-    @action(detail=True, methods=["get"], permission_classes=[IsOwnerParam], url_path="requester-exchanges")
+    @action(
+        detail=True,
+        methods=["get"],
+        permission_classes=[IsOwnerParam],
+        url_path="requester-exchanges",
+    )
     def requester_exchange(self, request, pk=None):
         user = self.get_object()
         exchanges = Exchange.objects.filter(requester=user)
+        serializer = ExchangeSerializer(exchanges, many=True)
+        return Response(serializer.data)
+
+    @action(
+        detail=True,
+        methods=["get"],
+        permission_classes=[IsOwnerParam],
+        url_path="completed-exchanges",
+    )
+    def completed_exchange(self, request, pk=None):
+        user = self.get_object()
+        exchanges = Exchange.objects.filter(status="accepted").filter(
+            Q(requester=user) | Q(owner=user)
+        )
+
         serializer = ExchangeSerializer(exchanges, many=True)
         return Response(serializer.data)
 
@@ -63,10 +95,12 @@ def logout(request):
     try:
         refresh_token = request.data.get("refresh")
         token = RefreshToken(refresh_token)
-        token.blacklist() 
-        response = Response({"message": "Déconnexion réussie"}, status=status.HTTP_200_OK)
-        response.delete_cookie('access_token')
-        response.delete_cookie('refresh_token')
+        token.blacklist()
+        response = Response(
+            {"message": "Déconnexion réussie"}, status=status.HTTP_200_OK
+        )
+        response.delete_cookie("access_token")
+        response.delete_cookie("refresh_token")
         return response
     except Exception as e:
         return Response({"error": "Token invalide"}, status=status.HTTP_400_BAD_REQUEST)
@@ -87,7 +121,9 @@ def login(request):
     user = authenticate(username=email, password=password)
 
     if user is None:
-        return Response({"error": "Identifiants invalides"}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(
+            {"error": "Identifiants invalides"}, status=status.HTTP_401_UNAUTHORIZED
+        )
 
     refresh = RefreshToken.for_user(user)
     access_token = str(refresh.access_token)
@@ -120,7 +156,7 @@ def login(request):
 @api_view(["POST"])
 def refresh(request):
     refresh_token = request.COOKIES.get("refresh_token")
-    
+
     if not refresh_token:
         return Response(
             {"error": "Refresh token non trouvé dans les cookies."},
@@ -137,7 +173,7 @@ def refresh(request):
             key="access_token",
             value=access_token,
             httponly=True,
-            secure=True, # True HTTPS only
+            secure=True,  # True HTTPS only
             samesite="None",
             max_age=3600,
             path="/",
