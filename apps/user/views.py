@@ -128,7 +128,10 @@ def login(request):
     refresh = RefreshToken.for_user(user)
     access_token = str(refresh.access_token)
 
-    response = Response({"message": "Connexion réussie"}, status=status.HTTP_200_OK)
+    response = Response(
+        {"message": "Connexion réussie", "user": UserSerializer(user).data},
+        status=status.HTTP_200_OK,
+    )
 
     response.set_cookie(
         key="access_token",
