@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from apps.exchange.models import Exchange
 from apps.puzzle.serializers import PuzzleSerializer
+from apps.user.serializers import UserSerializer
 
 
 class ExchangeSerializer(serializers.ModelSerializer):
@@ -10,6 +11,7 @@ class ExchangeSerializer(serializers.ModelSerializer):
     puzzle_asked_id = serializers.IntegerField(write_only=True, required=True)
     puzzle_proposed_id = serializers.IntegerField(write_only=True, required=False)
     message = serializers.CharField(required=False)
+    requester = UserSerializer(read_only=True)
 
     class Meta:
         model = Exchange
