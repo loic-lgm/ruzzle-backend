@@ -57,7 +57,7 @@ class UserViewSet(
     )
     def requested_exchange(self, request, pk=None):
         user = self.get_object()
-        exchanges = Exchange.objects.filter(owner=user)
+        exchanges = Exchange.objects.filter(owner=user, status="pending")
         serializer = ExchangeSerializer(exchanges, many=True)
         return Response(serializer.data)
 
@@ -69,7 +69,7 @@ class UserViewSet(
     )
     def requester_exchange(self, request, pk=None):
         user = self.get_object()
-        exchanges = Exchange.objects.filter(requester=user)
+        exchanges = Exchange.objects.filter(requester=user, status="pending")
         serializer = ExchangeSerializer(exchanges, many=True)
         return Response(serializer.data)
 
