@@ -52,3 +52,8 @@ class PuzzleSerializer(serializers.ModelSerializer):
         except Category.DoesNotExist:
             raise serializers.ValidationError({"category_id": "Catégorie introuvable."})
         return Puzzle.objects.create(brand=brand, category=category, **validated_data)
+
+    def update(self, instance, validated_data):
+        if "image" in validated_data and instance.image:
+            instance.image.delete(save=False)
+        return super().update(instance, validated_data)
