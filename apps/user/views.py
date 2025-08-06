@@ -20,7 +20,8 @@ from apps.favorite.models import Favorite
 from apps.favorite.serializers import FavoriteSerializer
 from apps.utils.authentication import CookieJWTAuthentication
 from apps.utils.permissions import IsOwnerParam
-from apps.user.serializers import UserRegistrationSerializer, UserSerializer
+from apps.user.models import User
+from apps.user.serializers import UserPublicSerializer, UserRegistrationSerializer, UserSerializer
 
 
 class UserViewSet(
@@ -212,7 +213,22 @@ def register(request):
 @authentication_classes([CookieJWTAuthentication])
 @permission_classes([IsAuthenticated])
 def me(request):
-    if not request.user or request.user.is_anonymous:
-        return Response({"error": "Non authentifié"}, status=401)
     serializer = UserSerializer(request.user)
     return Response(serializer.data, status=200)
+
+
+@api_view(["GET"])
+@authentication_classes([CookieJWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_by_username(request, username):
+    if request.user.username == username:
+        return Response(
+            {"error": "Utilisez la route /mon-espace pour accéder à votre profil."},
+            status=403,
+        )
+    try:
+        user = User.objects.get(username=username)
+        serializer = UserPublicSerializer(user)
+        return Response(serializer.data, status=200)
+    except User.DoesNotExist:
+        return Response({"error": "Utilisateur introuvable"}, status=404)

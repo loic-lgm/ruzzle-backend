@@ -14,7 +14,16 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["id", "username", "email", "first_name", "last_name", "image", "city", "created_at"]
+        fields = [
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "image",
+            "city",
+            "created_at",
+        ]
 
 
 class UserRegistrationSerializer(UserSerializer):
@@ -73,3 +82,24 @@ class UserRegistrationSerializer(UserSerializer):
         new_user.set_password(password)
         new_user.save()
         return new_user
+
+
+class UserPublicSerializer(UserSerializer):
+    puzzles = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "image",
+            "city",
+            "puzzles",
+            "created_at",
+        ]
+
+    def get_puzzles(self, obj):
+        from apps.puzzle.serializers import PuzzleSerializer
+
+        puzzles = obj.puzzles.all()
+        return PuzzleSerializer(puzzles, many=True).data
