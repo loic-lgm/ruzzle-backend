@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -102,4 +103,4 @@ class UserPublicSerializer(UserSerializer):
         from apps.puzzle.serializers import PuzzleSerializer
 
         puzzles = obj.puzzles.all()
-        return PuzzleSerializer(puzzles, many=True).data
+        return PuzzleSerializer(puzzles, many=True, context=self.context).data

@@ -65,7 +65,9 @@ class PuzzleViewSet(viewsets.ModelViewSet):
             selected_puzzles = random.sample(puzzles, min(4, len(puzzles)))
             result.append(
                 {
-                    "puzzles": PuzzleSerializer(selected_puzzles, many=True).data,
+                    "puzzles": PuzzleSerializer(
+                        selected_puzzles, many=True, context={"request": request}
+                    ).data,
                     "category": category.name,
                     "category_id": category.id,
                 }
@@ -75,8 +77,10 @@ class PuzzleViewSet(viewsets.ModelViewSet):
         detail=False, methods=["get"], permission_classes=[permissions.IsAuthenticated]
     )
     def mine(self, request):
-        puzzles = self.queryset.filter(owner=request.user)
-        serializer = self.get_serializer(puzzles, many=True)
+        puzzles = Puzzle.objects.filter(owner=request.user)
+        serializer = self.get_serializer(
+            puzzles, many=True, context={"request": request}
+        )
         return Response(serializer.data)
 
         return Response(result)

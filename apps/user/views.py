@@ -21,7 +21,11 @@ from apps.favorite.serializers import FavoriteSerializer
 from apps.utils.authentication import CookieJWTAuthentication
 from apps.utils.permissions import IsOwnerParam
 from apps.user.models import User
-from apps.user.serializers import UserPublicSerializer, UserRegistrationSerializer, UserSerializer
+from apps.user.serializers import (
+    UserPublicSerializer,
+    UserRegistrationSerializer,
+    UserSerializer,
+)
 
 
 class UserViewSet(
@@ -47,7 +51,9 @@ class UserViewSet(
     def favorites(self, request, pk=None):
         user = self.get_object()
         favorites = Favorite.objects.filter(owner=user)
-        serializer = FavoriteSerializer(favorites, many=True)
+        serializer = FavoriteSerializer(
+            favorites, many=True, context={"request": request}
+        )
         return Response(serializer.data)
 
     @action(
@@ -59,7 +65,9 @@ class UserViewSet(
     def requested_exchange(self, request, pk=None):
         user = self.get_object()
         exchanges = Exchange.objects.filter(owner=user, status="pending")
-        serializer = ExchangeSerializer(exchanges, many=True)
+        serializer = ExchangeSerializer(
+            exchanges, many=True, context={"request": request}
+        )
         return Response(serializer.data)
 
     @action(
@@ -71,7 +79,9 @@ class UserViewSet(
     def requester_exchange(self, request, pk=None):
         user = self.get_object()
         exchanges = Exchange.objects.filter(requester=user, status="pending")
-        serializer = ExchangeSerializer(exchanges, many=True)
+        serializer = ExchangeSerializer(
+            exchanges, many=True, context={"request": request}
+        )
         return Response(serializer.data)
 
     @action(
@@ -86,7 +96,9 @@ class UserViewSet(
             Q(requester=user) | Q(owner=user)
         )
 
-        serializer = ExchangeSerializer(exchanges, many=True)
+        serializer = ExchangeSerializer(
+            exchanges, many=True, context={"request": request}
+        )
         return Response(serializer.data)
 
 
@@ -202,7 +214,9 @@ def refresh(request):
 
 @api_view(["POST"])
 def register(request):
-    serializer = UserRegistrationSerializer(data=request.data)
+    serializer = UserRegistrationSerializer(
+        data=request.data, context={"request": request}
+    )
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
@@ -213,7 +227,7 @@ def register(request):
 @authentication_classes([CookieJWTAuthentication])
 @permission_classes([IsAuthenticated])
 def me(request):
-    serializer = UserSerializer(request.user)
+    serializer = UserSerializer(request.user, context={"request": request})
     return Response(serializer.data, status=200)
 
 
@@ -228,7 +242,7 @@ def get_user_by_username(request, username):
         )
     try:
         user = User.objects.get(username=username)
-        serializer = UserPublicSerializer(user)
+        serializer = UserPublicSerializer(user, context={"request": request})
         return Response(serializer.data, status=200)
     except User.DoesNotExist:
         return Response({"error": "Utilisateur introuvable"}, status=404)
