@@ -57,6 +57,10 @@ class UserRegistrationSerializer(UserSerializer):
         return value
 
     def validate_username(self, value):
+        if " " in value:
+            raise serializers.ValidationError(
+                "Le nom d'utilisateur ne doit pas contenir d'espaces."
+            )
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError("Ce nom d'utilisateur est déjà utilisé.")
         return value
