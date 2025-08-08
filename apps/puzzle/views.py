@@ -1,6 +1,6 @@
 import random
 
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
@@ -59,19 +59,15 @@ class PuzzleViewSet(viewsets.ModelViewSet):
     def random(self, request):
         categories = list(Category.objects.all())
         selected_categories = random.sample(categories, 4)
-        result = []
         for category in selected_categories:
             puzzles = list(Puzzle.objects.filter(category=category, is_published=True))
             selected_puzzles = random.sample(puzzles, min(4, len(puzzles)))
-            result.append(
-                {
-                    "puzzles": PuzzleSerializer(
-                        selected_puzzles, many=True, context={"request": request}
-                    ).data,
-                    "category": category.name,
-                    "category_id": category.id,
-                }
-            )
+        return Response(
+            PuzzleSerializer(
+                selected_puzzles, many=True, context={"request": request}
+            ).data,
+            status=status.HTTP_201_CREATED,
+        )
 
     @action(
         detail=False, methods=["get"], permission_classes=[permissions.IsAuthenticated]
