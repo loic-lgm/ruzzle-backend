@@ -78,3 +78,17 @@ class ExchangeViewSet(
             serializer.data,
             status=status.HTTP_201_CREATED,
         )
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        old_status = instance.status
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        if serializer.data.get("status") == "accepted" and old_status != "accepted":
+            puzzle_asked = instance.puzzle_asked
+            puzzle_proposed = instance.puzzle_proposed
+            if puzzle_asked and puzzle_proposed:
+                puzzle_asked.delete()
+                puzzle_proposed.delete()
+        return Response(serializer.data)
