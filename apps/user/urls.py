@@ -12,6 +12,6 @@ urlpatterns = [
     path("logout/", views.logout, name="logout"),
     path("refresh/", views.refresh, name="refresh"),
     path("register/", views.register, name="register"),
-    path("<str:username>/", views.get_user_by_username, name="public-profile"),
+    path("profile/<str:username>/", views.get_user_by_username, name="public-profile"),
     *router.urls,
 ]

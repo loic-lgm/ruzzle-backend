@@ -11,7 +11,7 @@ class CustomUserManager(BaseUserManager):
         Crée et renvoie un superutilisateur avec un email.
         """
         if not email:
-            raise ValueError('Le superutilisateur doit avoir un email')
+            raise ValueError("Le superutilisateur doit avoir un email")
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -28,14 +28,13 @@ class User(AbstractUser):
 
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(max_length=100, unique=True)
-    image = models.ImageField(upload_to="user_images/", blank=True, null=True, max_length=255)
+    image = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     city = models.ForeignKey(
         City, on_delete=models.PROTECT, related_name="users", null=True, blank=True
     )
 
     objects = CustomUserManager()
-
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

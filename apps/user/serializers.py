@@ -65,14 +65,12 @@ class UserRegistrationSerializer(UserSerializer):
             raise serializers.ValidationError("Ce nom d'utilisateur est déjà utilisé.")
         return value
 
-    def validate_image(self, value):
-        return validate_image(value, serializers=self)
-
     def create(self, validated_data):
         username = validated_data["username"]
         email = validated_data["email"]
         password = validated_data["password"]
         city_id = validated_data["city_id"]
+        image = validated_data["image"]
 
         city = None
         if city_id:
@@ -83,7 +81,7 @@ class UserRegistrationSerializer(UserSerializer):
                     {"city_id": "La ville spécifiée n'existe pas."}
                 )
 
-        new_user = User.objects.create(email=email, username=username, city=city)
+        new_user = User.objects.create(email=email, username=username, city=city, image=image)
         new_user.set_password(password)
         new_user.save()
         return new_user
