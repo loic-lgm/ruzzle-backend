@@ -3,6 +3,7 @@ import random
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from apps.category.models import Category
@@ -15,10 +16,17 @@ from hashids import Hashids
 hashids = Hashids(min_length=6, salt="ruzzlepuzzle")
 
 
+class PuzzlePagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class PuzzleViewSet(viewsets.ModelViewSet):
     queryset = Puzzle.objects.all()
     serializer_class = PuzzleSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    pagination_class = PuzzlePagination
 
     def get_queryset(self):
         queryset = super().get_queryset()
