@@ -28,7 +28,7 @@ class User(AbstractUser):
 
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(max_length=100, unique=True)
-    image = models.CharField(max_length=255, blank=True, null=True)
+    image = models.CharField(max_length=800, blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     city = models.ForeignKey(
         City, on_delete=models.PROTECT, related_name="users", null=True, blank=True
