@@ -71,6 +71,8 @@ class UserRegistrationSerializer(UserSerializer):
         password = validated_data["password"]
         city_id = validated_data["city_id"]
         image = validated_data["image"]
+        last_name = validated_data["last_name"]
+        first_name = validated_data["first_name"]
 
         city = None
         if city_id:
@@ -81,7 +83,14 @@ class UserRegistrationSerializer(UserSerializer):
                     {"city_id": "La ville spécifiée n'existe pas."}
                 )
 
-        new_user = User.objects.create(email=email, username=username, city=city, image=image)
+        new_user = User.objects.create(
+            email=email,
+            username=username,
+            city=city,
+            image=image,
+            last_name=last_name,
+            first_name=first_name,
+        )
         new_user.set_password(password)
         new_user.save()
         return new_user
