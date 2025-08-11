@@ -25,7 +25,8 @@ class Puzzle(models.Model):
     STATUS_CHOICES = [
         ("available", "available"),
         ("pending", "pending"),
-        ("swap", "swap"),
+        ("swapped", "swapped"),
+        ("deleted", "deleted"),
     ]
 
     name = models.CharField(max_length=255, blank=True, null=True)
