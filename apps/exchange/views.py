@@ -85,10 +85,16 @@ class ExchangeViewSet(
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        if serializer.data.get("status") == "accepted" and old_status != "accepted":
+        new_status = serializer.validated_data.get("status")
+        if new_status == "accepted" and old_status != "accepted":
+            instance.status = "accepted"
+            instance.save()
             puzzle_asked = instance.puzzle_asked
             puzzle_proposed = instance.puzzle_proposed
-            if puzzle_asked and puzzle_proposed:
-                puzzle_asked.delete()
-                puzzle_proposed.delete()
-        return Response(serializer.data)
+            if puzzle_asked:
+                puzzle_asked.status = "swapped"
+                puzzle_asked.save()
+            if puzzle_proposed:
+                puzzle_proposed.status = "swapped"
+                puzzle_proposed.save()
+        return Response(self.get_serializer(instance).data)
