@@ -30,6 +30,7 @@ class PuzzleViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.exclude(status__in=["swapped", "deleted"])
         category_id = self.request.query_params.get("category")
         brand_id = self.request.query_params.get("brand")
         city_name = self.request.query_params.get("city")
@@ -81,7 +82,9 @@ class PuzzleViewSet(viewsets.ModelViewSet):
         detail=False, methods=["get"], permission_classes=[permissions.IsAuthenticated]
     )
     def mine(self, request):
-        puzzles = Puzzle.objects.filter(owner=request.user)
+        puzzles = Puzzle.objects.filter(owner=request.user).exclude(
+            status__in=["swapped", "deleted"]
+        )
         serializer = self.get_serializer(
             puzzles, many=True, context={"request": request}
         )
