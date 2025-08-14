@@ -74,6 +74,11 @@ class ExchangeViewSet(
             message=message,
         )
 
+        puzzle_asked.status = "pending"
+        puzzle_asked.save()
+        puzzle_proposed.status = "pending"
+        puzzle_proposed.save()
+
         return Response(
             serializer.data,
             status=status.HTTP_201_CREATED,
