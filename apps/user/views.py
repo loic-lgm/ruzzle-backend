@@ -47,6 +47,18 @@ class UserViewSet(
 
         return super().get_permissions()
 
+    @action(detail=False, methods=["get"])
+    def search(self, request):
+        search = request.query_params.get("q", "")
+        if not search:
+            return Response([])
+        users = User.objects.filter(username__istartswith=search)
+        if request.user.is_authenticated:
+            users = users.exclude(id=request.user.id)
+        users = users[:10]
+        serializer = self.get_serializer(users, many=True)
+        return Response(serializer.data)
+
     @action(detail=True, methods=["get"], permission_classes=[IsOwnerParam])
     def favorites(self, request, pk=None):
         user = self.get_object()
