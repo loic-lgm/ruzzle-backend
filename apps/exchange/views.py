@@ -112,4 +112,18 @@ class ExchangeViewSet(
             | Q(puzzle_proposed=puzzle_proposed)
         ).exclude(id=instance.id).update(status="denied")
 
+        if new_status == "denied" and old_status != "denied":
+            puzzle_asked = instance.puzzle_asked
+            puzzle_proposed = instance.puzzle_proposed
+
+            for puzzle in [puzzle_asked, puzzle_proposed]:
+                if puzzle:
+                    is_in_other_exchange = Exchange.objects.filter(
+                        Q(puzzle_asked=puzzle) | Q(puzzle_proposed=puzzle),
+                    ).exclude(id=instance.id).exclude(status="denied").exists()
+
+                    if not is_in_other_exchange:
+                        puzzle.status = "available"
+                        puzzle.save()
+
         return Response(self.get_serializer(instance).data)
