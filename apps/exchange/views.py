@@ -85,6 +85,8 @@ class ExchangeViewSet(
         )
 
     def update(self, request, *args, **kwargs):
+        from django.db.models import Q
+
         instance = self.get_object()
         old_status = instance.status
         serializer = self.get_serializer(instance, data=request.data, partial=True)
@@ -102,4 +104,12 @@ class ExchangeViewSet(
             if puzzle_proposed:
                 puzzle_proposed.status = "swapped"
                 puzzle_proposed.save()
+
+        Exchange.objects.filter(
+            Q(puzzle_asked=puzzle_asked)
+            | Q(puzzle_proposed=puzzle_asked)
+            | Q(puzzle_asked=puzzle_proposed)
+            | Q(puzzle_proposed=puzzle_proposed)
+        ).exclude(id=instance.id).update(status="denied")
+
         return Response(self.get_serializer(instance).data)
