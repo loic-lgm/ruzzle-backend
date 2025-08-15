@@ -1,5 +1,7 @@
 import random
 
+from django.db.models import Q
+
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
@@ -7,6 +9,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from apps.category.models import Category
+from apps.exchange.models import Exchange
 from apps.utils.permissions import IsOwnerOrIsAdminOrReadOnly
 from apps.puzzle.models import Puzzle
 from apps.puzzle.serializers import PuzzleSerializer
@@ -63,6 +66,13 @@ class PuzzleViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        Exchange.objects.filter(
+            Q(puzzle_asked=instance) | Q(puzzle_proposed=instance)
+        ).update(status="denied")
+        return super().destroy(request, *args, **kwargs)
 
     @action(detail=False, methods=["get"])
     def random(self, request):
