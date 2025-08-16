@@ -28,7 +28,7 @@ class Message(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="messages_sent"
     )
-    content = models.TextField()
+    content = models.CharField(max_length=500)
     created = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
 
