@@ -16,7 +16,7 @@ class ConversationViewSet(
 
     def get_queryset(self):
         return Conversation.objects.filter(participants=self.request.user).order_by(
-            "-updated_at"
+            "-updated"
         )
 
 
@@ -34,7 +34,7 @@ class MessageViewSet(
             return Message.objects.filter(
                 conversation_id=conversation_id,
                 conversation__participants=self.request.user,
-            ).order_by("created_at")
+            ).order_by("created")
         return Message.objects.none()
 
     def perform_create(self, serializer):
