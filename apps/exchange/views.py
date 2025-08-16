@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from apps.exchange.models import Exchange
 from apps.exchange.permissions import IsExchangeRequestedOrRequester
 from apps.exchange.serializers import ExchangeSerializer
+from apps.notification.models import Notification
 from apps.puzzle.models import Puzzle
 
 
@@ -78,6 +79,12 @@ class ExchangeViewSet(
         puzzle_asked.save()
         puzzle_proposed.status = "pending"
         puzzle_proposed.save()
+
+        Notification.objects.create(
+            user=puzzle_asked.owner,
+            sender=request.user,
+            notif_type="exchange_request"
+        )
 
         return Response(
             serializer.data,

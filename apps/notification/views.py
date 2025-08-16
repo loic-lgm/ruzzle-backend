@@ -8,5 +8,6 @@ class NotificationViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Notification.objects.filter(user=self.request.user)
-
+        return Notification.objects.filter(user=self.request.user).order_by(
+            "-created_at"
+        )[:20]
