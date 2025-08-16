@@ -32,6 +32,7 @@ urlpatterns = [
     path("rates/", include("apps.rate.urls"), name="rates"),
     path("users/", include("apps.user.urls"), name="users"),
     path("notifications/", include("apps.notification.urls"), name="notifications"),
+    path("messages/", include("apps.message.urls"), name="messages"),
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
