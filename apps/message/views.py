@@ -1,10 +1,14 @@
+from re import S
 from rest_framework import mixins, viewsets, permissions
+from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
+
+from django.db.models import Prefetch
 
 from apps.utils.authentication import CookieJWTAuthentication
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
-from django.db.models import Q
 
 
 class ConversationViewSet(
@@ -37,5 +41,26 @@ class MessageViewSet(
     def perform_create(self, serializer):
         conversation = serializer.validated_data["conversation"]
         if self.request.user not in conversation.participants.all():
-            raise PermissionDenied("Vous ne pouvez pas envoyer de message dans cette conversation.")
+            raise PermissionDenied(
+                "Vous ne pouvez pas envoyer de message dans cette conversation."
+            )
         serializer.save(user=self.request.user)
+
+    @action(detail=False, methods=["get"])
+    def unread_count(self, request):
+        conversations = Conversation.objects.filter(
+            participants=request.user
+        ).prefetch_related(
+            Prefetch(
+                "messages",
+                queryset=Message.objects.order_by("-created"),
+                to_attr="prefetched_messages",
+            )
+        )
+        count = 0
+        for conv in conversations:
+            last_msg = conv.prefetched_messages[0] if conv.prefetched_messages else None
+            if last_msg and last_msg.user != request.user and not last_msg.is_read:
+                count += 1
+
+        return Response({count})
