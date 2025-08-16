@@ -68,8 +68,8 @@ INSTALLED_APPS = [
     "apps.puzzle",
     "apps.rate",
     "apps.user",
-    "app.message",
-    "app.notification",
+    "apps.message",
+    "apps.notification",
 ]
 
 MIDDLEWARE = [
