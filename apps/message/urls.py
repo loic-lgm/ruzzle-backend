@@ -5,7 +5,7 @@ from apps.message import views
 
 router = DefaultRouter()
 router.register("conversations", views.ConversationViewSet, basename="conversation")
-router.register("messages", views.MessageViewSet, basename="message")
+router.register("", views.MessageViewSet, basename="message")
 
 urlpatterns = [
     path("", include(router.urls)),

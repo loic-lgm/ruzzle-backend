@@ -22,6 +22,7 @@ class ConversationViewSet(
 
 class MessageViewSet(
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
     serializer_class = MessageSerializer
@@ -29,13 +30,9 @@ class MessageViewSet(
     authentication_classes = [CookieJWTAuthentication]
 
     def get_queryset(self):
-        conversation_id = self.request.query_params.get("conversation")
-        if conversation_id:
-            return Message.objects.filter(
-                conversation_id=conversation_id,
-                conversation__participants=self.request.user,
-            ).order_by("created")
-        return Message.objects.none()
+        return Message.objects.filter(
+            conversation__participants=self.request.user
+        ).order_by("created")
 
     def perform_create(self, serializer):
         conversation = serializer.validated_data["conversation"]
