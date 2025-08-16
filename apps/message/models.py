@@ -11,9 +11,7 @@ class Conversation(models.Model):
 
     participants = models.ManyToManyField(User, related_name="conversations")
     created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(
-        auto_now=True
-    )
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Conversation {self.id} - {self.participants.count()} participants"
@@ -35,4 +33,4 @@ class Message(models.Model):
     is_read = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Message {self.id} de {self.sender.username}"
+        return f"Message {self.id} de {self.user.username}"

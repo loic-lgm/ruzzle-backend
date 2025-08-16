@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from apps.exchange.models import Exchange
 from apps.exchange.permissions import IsExchangeRequestedOrRequester
 from apps.exchange.serializers import ExchangeSerializer
+from apps.message.models import Conversation, Message
 from apps.notification.models import Notification
 from apps.puzzle.models import Puzzle
 
@@ -85,6 +86,18 @@ class ExchangeViewSet(
             sender=request.user,
             notif_type="exchange_request"
         )
+
+        conversation = Conversation.objects.create()
+        conversation.participants.add(request.user, puzzle_asked.owner)
+        if message:
+            Message.objects.create(
+                conversation=conversation, user=request.user, content=message
+            )
+            Notification.objects.create(
+                user=puzzle_asked.owner,
+                sender=request.user,
+                notif_type="new_message",
+            )
 
         return Response(
             serializer.data,

@@ -1,11 +1,17 @@
-from rest_framework import viewsets, permissions
+from rest_framework import mixins, viewsets, permissions
+from rest_framework.response import Response
 
 from apps.utils.authentication import CookieJWTAuthentication
 from .models import Notification
 from .serializers import NotificationSerializer
 
 
-class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
+class NotificationViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     serializer_class = NotificationSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [CookieJWTAuthentication]
@@ -13,4 +19,12 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user).order_by(
             "-created_at"
-        )[:20]
+        )
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()[:20]
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
