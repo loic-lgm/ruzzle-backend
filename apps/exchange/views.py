@@ -125,12 +125,12 @@ class ExchangeViewSet(
                 puzzle_proposed.status = "swapped"
                 puzzle_proposed.save()
 
-        Exchange.objects.filter(
-            Q(puzzle_asked=puzzle_asked)
-            | Q(puzzle_proposed=puzzle_asked)
-            | Q(puzzle_asked=puzzle_proposed)
-            | Q(puzzle_proposed=puzzle_proposed)
-        ).exclude(id=instance.id).update(status="denied")
+            Exchange.objects.filter(
+                Q(puzzle_asked=puzzle_asked)
+                | Q(puzzle_proposed=puzzle_asked)
+                | Q(puzzle_asked=puzzle_proposed)
+                | Q(puzzle_proposed=puzzle_proposed)
+            ).exclude(id=instance.id).update(status="denied")
 
         if new_status == "denied" and old_status != "denied":
             puzzle_asked = instance.puzzle_asked
