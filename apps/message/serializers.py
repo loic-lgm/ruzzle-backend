@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.exchange.serializers import ExchangeSerializer
 from apps.user.serializers import UserSerializer
 from .models import Conversation, Message
 
@@ -17,6 +18,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True, read_only=True)
     messages = serializers.SerializerMethodField()
     last_message = serializers.SerializerMethodField()
+    exchange = ExchangeSerializer(read_only=True)
 
     class Meta:
         model = Conversation
@@ -27,6 +29,7 @@ class ConversationSerializer(serializers.ModelSerializer):
             "last_message",
             "created",
             "updated",
+            "exchange",
         ]
 
     def get_last_message(self, obj):

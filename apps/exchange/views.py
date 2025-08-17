@@ -82,12 +82,11 @@ class ExchangeViewSet(
         puzzle_proposed.save()
 
         Notification.objects.create(
-            user=puzzle_asked.owner,
-            sender=request.user,
-            notif_type="exchange_request"
+            user=puzzle_asked.owner, sender=request.user, notif_type="exchange_request"
         )
 
-        conversation = Conversation.objects.create()
+        exchange = serializer.instance
+        conversation = Conversation.objects.create(exchange=exchange)
         conversation.participants.add(request.user, puzzle_asked.owner)
         if message:
             Message.objects.create(
@@ -138,9 +137,14 @@ class ExchangeViewSet(
 
             for puzzle in [puzzle_asked, puzzle_proposed]:
                 if puzzle:
-                    is_in_other_exchange = Exchange.objects.filter(
-                        Q(puzzle_asked=puzzle) | Q(puzzle_proposed=puzzle),
-                    ).exclude(id=instance.id).exclude(status="denied").exists()
+                    is_in_other_exchange = (
+                        Exchange.objects.filter(
+                            Q(puzzle_asked=puzzle) | Q(puzzle_proposed=puzzle),
+                        )
+                        .exclude(id=instance.id)
+                        .exclude(status="denied")
+                        .exists()
+                    )
 
                     if not is_in_other_exchange:
                         puzzle.status = "available"

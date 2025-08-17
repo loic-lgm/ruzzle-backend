@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 
+from apps.exchange.models import Exchange
+
 User = settings.AUTH_USER_MODEL
 
 
@@ -9,12 +11,15 @@ class Conversation(models.Model):
     Conversation between two users
     """
 
+    exchange = models.OneToOneField(
+        Exchange, on_delete=models.CASCADE, related_name="conversation"
+    )
     participants = models.ManyToManyField(User, related_name="conversations")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Conversation {self.id} - {self.participants.count()} participants"
+        return f"Conversation pour échange {self.exchange_id}"
 
 
 class Message(models.Model):
