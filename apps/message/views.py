@@ -46,6 +46,7 @@ class MessageViewSet(
                 "Vous ne pouvez pas envoyer de message dans cette conversation."
             )
         serializer.save(user=self.request.user)
+        conversation.save(update_fields=["updated"])
         other_participant = conversation.participants.exclude(
             id=self.request.user.id
         ).first()
