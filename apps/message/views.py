@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from django.db.models import Prefetch
 
+from apps.notification.models import Notification
 from apps.utils.authentication import CookieJWTAuthentication
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
@@ -45,6 +46,15 @@ class MessageViewSet(
                 "Vous ne pouvez pas envoyer de message dans cette conversation."
             )
         serializer.save(user=self.request.user)
+        other_participant = conversation.participants.exclude(
+            id=self.request.user.id
+        ).first()
+        if other_participant:
+            Notification.objects.create(
+                user=other_participant,
+                sender=self.request.user,
+                notif_type="new_message",
+            )
 
     @action(detail=False, methods=["get"])
     def unread_count(self, request):
