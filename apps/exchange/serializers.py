@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from django.core.exceptions import ObjectDoesNotExist
+
 from apps.exchange.models import Exchange
 from apps.puzzle.serializers import PuzzleSerializer
 from apps.user.serializers import UserSerializer
@@ -12,6 +14,7 @@ class ExchangeSerializer(serializers.ModelSerializer):
     puzzle_proposed_id = serializers.IntegerField(write_only=True, required=False)
     message = serializers.CharField(required=False)
     requester = UserSerializer(read_only=True)
+    conversation_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Exchange
@@ -25,7 +28,14 @@ class ExchangeSerializer(serializers.ModelSerializer):
             "puzzle_proposed_id",
             "message",
             "requester",
+            "conversation_id",
         ]
+
+    def get_conversation_id(self, obj):
+        try:
+            return obj.conversation.id
+        except ObjectDoesNotExist:
+            return None
 
     def validate(self, data):
         if self.instance:
