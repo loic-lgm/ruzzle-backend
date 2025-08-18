@@ -41,6 +41,6 @@ class ExchangeSerializer(serializers.ModelSerializer):
 
             if already_exists:
                 raise serializers.ValidationError(
-                    "Un échange avec ces puzzles existe déjà."
+                    {"error": "Un échange avec ces puzzles existe déjà."}
                 )
         return data
