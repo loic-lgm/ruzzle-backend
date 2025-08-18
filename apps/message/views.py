@@ -55,6 +55,7 @@ class MessageViewSet(
                 user=other_participant,
                 sender=self.request.user,
                 notif_type="new_message",
+                conversation=conversation,
             )
 
     @action(detail=False, methods=["get"])

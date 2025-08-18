@@ -96,6 +96,7 @@ class ExchangeViewSet(
                 user=puzzle_asked.owner,
                 sender=request.user,
                 notif_type="new_message",
+                conversation=conversation,
             )
 
         return Response(
