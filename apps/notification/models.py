@@ -8,6 +8,8 @@ class Notification(models.Model):
     NOTIF_TYPES = [
         ("exchange_request", "Demande d'échange"),
         ("new_message", "Nouveau message"),
+        ("exchange_accepted", "Echange accepté"),
+        ("exchange_denied", "Echange refusé"),
     ]
 
     user = models.ForeignKey(
