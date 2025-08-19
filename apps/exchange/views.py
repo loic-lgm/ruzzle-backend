@@ -109,6 +109,7 @@ class ExchangeViewSet(
 
         instance = self.get_object()
         old_status = instance.status
+        conversation = instance.conversation
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
@@ -124,18 +125,27 @@ class ExchangeViewSet(
             if puzzle_proposed:
                 puzzle_proposed.status = "swapped"
                 puzzle_proposed.save()
-
             Exchange.objects.filter(
                 Q(puzzle_asked=puzzle_asked)
                 | Q(puzzle_proposed=puzzle_asked)
                 | Q(puzzle_asked=puzzle_proposed)
                 | Q(puzzle_proposed=puzzle_proposed)
             ).exclude(id=instance.id).update(status="denied")
+            Notification.objects.create(
+                user=puzzle_proposed.owner,
+                sender=request.user,
+                notif_type="exchange_accepted",
+                conversation=conversation,
+            )
 
         if new_status == "denied" and old_status != "denied":
             puzzle_asked = instance.puzzle_asked
             puzzle_proposed = instance.puzzle_proposed
-
+            other_user = (
+                instance.puzzle_proposed.owner
+                if request.user != instance.puzzle_proposed.owner
+                else instance.puzzle_asked.owner
+            )
             for puzzle in [puzzle_asked, puzzle_proposed]:
                 if puzzle:
                     is_in_other_exchange = (
@@ -150,5 +160,11 @@ class ExchangeViewSet(
                     if not is_in_other_exchange:
                         puzzle.status = "available"
                         puzzle.save()
+            Notification.objects.create(
+                user=other_user,
+                sender=request.user,
+                notif_type="exchange_denied",
+                conversation=conversation,
+            )
 
         return Response(self.get_serializer(instance).data)
