@@ -37,12 +37,22 @@ class PuzzleViewSet(viewsets.ModelViewSet):
         category_id = self.request.query_params.get("category")
         brand_id = self.request.query_params.get("brand")
         city_name = self.request.query_params.get("city")
+        piece_range = self.request.query_params.get("pieceCount")
         if category_id:
             queryset = queryset.filter(category_id=category_id)
         if brand_id:
             queryset = queryset.filter(brand_id=brand_id)
         if city_name:
             queryset = queryset.filter(owner__city__name__iexact=city_name)
+        if piece_range:
+            if piece_range == "-500":
+                queryset = queryset.filter(piece_count__lt=500)
+            elif piece_range == "500-1000":
+                queryset = queryset.filter(piece_count__gte=500, piece_count__lt=1000)
+            elif piece_range == "1000-2000":
+                queryset = queryset.filter(piece_count__gte=1000, piece_count__lt=2000)
+            elif piece_range == "2000+":
+                queryset = queryset.filter(piece_count__gte=2000)
         user = self.request.user
         if user.is_authenticated:
             queryset = queryset.exclude(owner=user)
