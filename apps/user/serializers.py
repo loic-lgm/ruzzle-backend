@@ -113,5 +113,5 @@ class UserPublicSerializer(UserSerializer):
     def get_puzzles(self, obj):
         from apps.puzzle.serializers import PuzzleSerializer
 
-        puzzles = obj.puzzles.all()
+        puzzles = obj.puzzles.exclude(status__in=["swapped", "deleted"])
         return PuzzleSerializer(puzzles, many=True, context=self.context).data

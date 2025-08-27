@@ -5,6 +5,7 @@ from apps.puzzle.models import Puzzle
 
 class PuzzleAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "name",
         "brand",
         "piece_count",
