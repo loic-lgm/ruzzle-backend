@@ -8,7 +8,7 @@ class PuzzleAdmin(admin.ModelAdmin):
         "id",
         "name",
         "brand",
-        "piece_count",
+        "hashid",
         "piece_count",
         "description",
         "condition",
