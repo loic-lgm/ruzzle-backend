@@ -58,6 +58,19 @@ class MessageViewSet(
                 conversation=conversation,
             )
 
+    def partial_update(self, request, *args, **kwargs):
+        response = super().partial_update(request, *args, **kwargs)
+        instance = self.get_object()
+        if "is_read" in request.data and request.data["is_read"] is True:
+            from apps.notification.models import Notification
+            Notification.objects.filter(
+                user=request.user,
+                notif_type="new_message",
+                conversation=instance.conversation,
+                is_read=False,
+            ).update(is_read=True)
+        return response
+
     @action(detail=False, methods=["get"])
     def unread_count(self, request):
         conversations = Conversation.objects.filter(
