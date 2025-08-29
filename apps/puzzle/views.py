@@ -36,14 +36,14 @@ class PuzzleViewSet(viewsets.ModelViewSet):
         queryset = queryset.exclude(status__in=["swapped", "deleted"])
         category_id = self.request.query_params.get("category")
         brand_id = self.request.query_params.get("brand")
-        city_name = self.request.query_params.get("city")
+        city_id = self.request.query_params.get("city")
         piece_range = self.request.query_params.get("pieceCount")
         if category_id:
             queryset = queryset.filter(category_id=category_id)
         if brand_id:
             queryset = queryset.filter(brand_id=brand_id)
-        if city_name:
-            queryset = queryset.filter(owner__city__name__iexact=city_name)
+        if city_id:
+            queryset = queryset.filter(owner__city_id=city_id)
         if piece_range:
             if piece_range == "-500":
                 queryset = queryset.filter(piece_count__lt=500)
