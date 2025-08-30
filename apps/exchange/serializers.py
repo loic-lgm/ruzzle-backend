@@ -45,9 +45,14 @@ class ExchangeSerializer(serializers.ModelSerializer):
         puzzle_proposed_id = data.get("puzzle_proposed_id")
 
         if puzzle_asked_id and puzzle_proposed_id:
-            already_exists = Exchange.objects.filter(
-                puzzle_asked_id=puzzle_asked_id, puzzle_proposed_id=puzzle_proposed_id
-            ).exists()
+            already_exists = (
+                Exchange.objects.filter(
+                    puzzle_asked_id=puzzle_asked_id,
+                    puzzle_proposed_id=puzzle_proposed_id,
+                )
+                .exclude(status="denied")
+                .exists()
+            )
 
             if already_exists:
                 raise serializers.ValidationError(
