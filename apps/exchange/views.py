@@ -145,11 +145,11 @@ class ExchangeViewSet(
                         notif_type="exchange_accepted",
                         conversation=conversation,
                     )
-                    Message.objects.create(
-                        conversation=exchange.conversation,
-                        user=request.user,
-                        content="Bonjour, j'ai accepté une autre offre pour ce puzzle.",
-                    )
+                    # Message.objects.create(
+                    #     conversation=exchange.conversation,
+                    #     user=request.user,
+                    #     content="Bonjour, j'ai accepté une autre offre pour ce puzzle.",
+                    # )
                     other_user = (
                         exchange.puzzle_proposed.owner
                         if request.user != exchange.puzzle_proposed.owner
