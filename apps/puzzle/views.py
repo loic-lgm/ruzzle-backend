@@ -65,7 +65,9 @@ class PuzzleViewSet(viewsets.ModelViewSet):
         if not decoded:
             raise NotFound("Puzzle introuvable")
         try:
-            return Puzzle.objects.get(id=decoded[0])
+            return Puzzle.objects.exclude(status__in=["swapped", "deleted"]).get(
+                id=decoded[0]
+            )
         except Puzzle.DoesNotExist:
             raise NotFound("Puzzle introuvable")
 
