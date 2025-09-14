@@ -135,32 +135,32 @@ class ExchangeViewSet(
                 .exclude(id=instance.id)
                 .select_related("conversation")
             )
+            Notification.objects.create(
+                user=puzzle_proposed.owner,
+                sender=request.user,
+                notif_type="exchange_accepted",
+                conversation=conversation,
+            )
             for exchange in other_exchanges:
                 exchange.status = "denied"
                 exchange.save()
-                if hasattr(exchange, "conversation"):
-                    Notification.objects.create(
-                        user=puzzle_proposed.owner,
-                        sender=request.user,
-                        notif_type="exchange_accepted",
-                        conversation=conversation,
-                    )
-                    # Message.objects.create(
-                    #     conversation=exchange.conversation,
-                    #     user=request.user,
-                    #     content="Bonjour, j'ai accepté une autre offre pour ce puzzle.",
-                    # )
-                    other_user = (
-                        exchange.puzzle_proposed.owner
-                        if request.user != exchange.puzzle_proposed.owner
-                        else exchange.puzzle_asked.owner
-                    )
-                    Notification.objects.create(
-                        user=other_user,
-                        sender=request.user,
-                        notif_type="exchange_denied",
-                        conversation=exchange.conversation,
-                    )
+                # if hasattr(exchange, "conversation"):
+                # Message.objects.create(
+                #     conversation=exchange.conversation,
+                #     user=request.user,
+                #     content="Bonjour, j'ai accepté une autre offre pour ce puzzle.",
+                # )
+                other_user = (
+                    exchange.puzzle_proposed.owner
+                    if request.user != exchange.puzzle_proposed.owner
+                    else exchange.puzzle_asked.owner
+                )
+                Notification.objects.create(
+                    user=other_user,
+                    sender=request.user,
+                    notif_type="exchange_denied",
+                    conversation=conversation,
+                )
 
         if new_status == "denied" and old_status != "denied":
             puzzle_asked = instance.puzzle_asked
