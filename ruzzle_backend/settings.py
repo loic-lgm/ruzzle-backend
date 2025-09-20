@@ -39,7 +39,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-_9-dvl!+sekkyjeec7u)i6#bg=2q7v#+-(qhgbv1rf$=m2e$q&"
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -113,8 +113,8 @@ DATABASES = {
         "NAME": os.getenv("NAME", default=""),
         "USER": os.getenv("USER", default=""),
         "PASSWORD": os.getenv("PASSWORD", default=""),
-        "HOST": "localhost",
-        "PORT": "5432",
+        "HOST": os.getenv("DB_HOSt", default="localhost"),
+        "PORT": os.getenv("DB_PORT", default="5432"),
     }
 }
 
