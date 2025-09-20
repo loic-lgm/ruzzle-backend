@@ -89,6 +89,8 @@ class PuzzleViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"])
     def random(self, request):
         categories = list(Category.objects.all())
+        if not categories:
+            return Response([], status=status.HTTP_200_OK)
         selected_categories = random.sample(categories, 4)
         for category in selected_categories:
             puzzles = list(Puzzle.objects.filter(category=category, is_published=True))
