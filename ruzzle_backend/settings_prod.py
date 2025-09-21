@@ -23,28 +23,41 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "https://hoppscotch.io",
-]
+CORS_ALLOWED_ORIGINS = ["https://ruzzle.vercel.app", "https://ruzzle.fr"]
+CSRF_TRUSTED_ORIGINS = ["https://ruzzle.fr", "https://ruzzle.vercel.app"]
 
-CSRF_COOKIE_SECURE = False  # TODO True pour HTTPS
-SESSION_COOKIE_SECURE = False  # TODO True pour HTTPS
+CSRF_COOKIE_SECURE = True  # True pour HTTPS | False local
+SESSION_COOKIE_SECURE = True  # True pour HTTPS | False local
 
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_SSL_REDIRECT = True
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-_9-dvl!+sekkyjeec7u)i6#bg=2q7v#+-(qhgbv1rf$=m2e$q&"
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "ERROR",  # DEBUG pour plus d’infos
+    },
+}
+
+ALLOWED_HOSTS = ["api.ruzzle.fr", "ruzzle.alwaysdata.net"]
 
 
 # Application definition
@@ -113,8 +126,8 @@ DATABASES = {
         "NAME": os.getenv("NAME", default=""),
         "USER": os.getenv("USER", default=""),
         "PASSWORD": os.getenv("PASSWORD", default=""),
-        "HOST": "localhost",
-        "PORT": "5432",
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
     }
 }
 
@@ -153,7 +166,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"

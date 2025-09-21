@@ -11,8 +11,11 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault(
-    "DJANGO_SETTINGS_MODULE", "ruzzle_backend.settings"
-)
+env = os.getenv("ENV", "dev").lower()
+if env == "prod":
+    settings_module = "ruzzle_backend.settings_prod"
+else:
+    settings_module = "ruzzle_backend.settings"
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", settings_module)
 
 application = get_wsgi_application()

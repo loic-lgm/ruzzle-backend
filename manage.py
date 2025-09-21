@@ -6,7 +6,13 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ruzzle_backend.settings')
+    env = os.getenv("ENV", "dev").lower()
+    if env == "prod":
+        settings_module = "ruzzle_backend.settings_prod"
+    else:
+        settings_module = "ruzzle_backend.settings"
+
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", settings_module)
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
