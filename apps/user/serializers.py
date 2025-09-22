@@ -90,6 +90,7 @@ class UserRegistrationSerializer(UserSerializer):
             image=image,
             last_name=last_name,
             first_name=first_name,
+            is_active=False,
         )
         new_user.set_password(password)
         new_user.save()
