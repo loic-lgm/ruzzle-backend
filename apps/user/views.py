@@ -1,5 +1,7 @@
 from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Q
+from django.utils.http import urlsafe_base64_decode
 
 
 from rest_framework import mixins, permissions, status, viewsets
@@ -18,6 +20,7 @@ from apps.exchange.models import Exchange
 from apps.exchange.serializers import ExchangeSerializer
 from apps.favorite.models import Favorite
 from apps.favorite.serializers import FavoriteSerializer
+from apps.user.utils import generate_activation_link
 from apps.utils.authentication import CookieJWTAuthentication
 from apps.utils.permissions import IsOwnerParam
 from apps.user.models import User
@@ -26,6 +29,7 @@ from apps.user.serializers import (
     UserRegistrationSerializer,
     UserSerializer,
 )
+from apps.utils.send_email import send_activation_email
 
 
 class UserViewSet(
@@ -145,28 +149,29 @@ def logout(request):
 def login(request):
     password = request.data.get("password")
     email = request.data.get("email")
-
     if not email or not password:
         return Response(
             {"error": "Veuillez fournir un email et un mot de passe"},
             status=status.HTTP_400_BAD_REQUEST,
         )
-
     user = authenticate(username=email, password=password)
-
     if user is None:
         return Response(
             {"error": "Identifiants invalides"}, status=status.HTTP_401_UNAUTHORIZED
         )
-
+    if not user.is_active:
+        return Response(
+            {
+                "error": "Votre compte n'est pas encore activé. Veuillez vérifier vos emails."
+            },
+            status=status.HTTP_403_FORBIDDEN,
+        )
     refresh = RefreshToken.for_user(user)
     access_token = str(refresh.access_token)
-
     response = Response(
         {"message": "Connexion réussie", "user": UserSerializer(user).data},
         status=status.HTTP_200_OK,
     )
-
     response.set_cookie(
         key="access_token",
         value=access_token,
@@ -176,7 +181,6 @@ def login(request):
         max_age=3600,
         path="/",
     )
-
     response.set_cookie(
         key="refresh_token",
         value=str(refresh),
@@ -186,7 +190,6 @@ def login(request):
         max_age=3600 * 24 * 7,
         path="/",
     )
-
     return response
 
 
@@ -230,9 +233,30 @@ def register(request):
         data=request.data, context={"request": request}
     )
     if serializer.is_valid():
-        serializer.save()
+        user = serializer.save()
+        activation_link = generate_activation_link(user, request)
+        send_activation_email(user, activation_link)
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def activate_user(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        return Response({"error": "Lien invalide."}, status=status.HTTP_400_BAD_REQUEST)
+    if default_token_generator.check_token(user, token):
+        if user.is_active:
+            return Response({"message": "Compte déjà activé."})
+        user.is_active = True
+        user.save()
+        return Response({"message": "Compte activé avec succès !"})
+    else:
+        return Response(
+            {"error": "Lien invalide ou expiré."}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 @api_view(["GET"])
