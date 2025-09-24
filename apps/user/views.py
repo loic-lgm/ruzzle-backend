@@ -273,16 +273,16 @@ def me(request):
 @authentication_classes([CookieJWTAuthentication])
 @permission_classes([IsAuthenticated])
 def get_user_by_username(request, username):
+    try:
+        user = User.objects.get(
+            username=username, is_active=True, is_staff=False, is_superuser=False
+        )
+    except User.DoesNotExist:
+        return Response({"error": "Utilisateur introuvable"}, status=404)
     if request.user.username == username:
         return Response(
             {"error": "Utilisez la route /mon-espace pour accéder à votre profil."},
             status=403,
         )
-    try:
-        user = User.objects.get(
-            username=username, is_active=True, is_staff=False, is_superuser=False
-        )
-        serializer = UserPublicSerializer(user, context={"request": request})
-        return Response(serializer.data, status=200)
-    except User.DoesNotExist:
-        return Response({"error": "Utilisateur introuvable"}, status=404)
+    serializer = UserPublicSerializer(user, context={"request": request})
+    return Response(serializer.data, status=200)
