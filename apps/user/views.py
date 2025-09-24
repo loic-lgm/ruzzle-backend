@@ -56,7 +56,11 @@ class UserViewSet(
         search = request.query_params.get("q", "")
         if not search:
             return Response([])
-        users = User.objects.filter(username__istartswith=search)
+        users = (
+            User.objects.filter(username__istartswith=search, is_active=True)
+            .exclude(is_staff=True)
+            .exclude(is_superuser=True)
+        )
         if request.user.is_authenticated:
             users = users.exclude(id=request.user.id)
         users = users[:10]
