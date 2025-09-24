@@ -271,7 +271,7 @@ def me(request):
 
 @api_view(["GET"])
 @authentication_classes([CookieJWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_user_by_username(request, username):
     try:
         user = User.objects.get(
@@ -279,7 +279,7 @@ def get_user_by_username(request, username):
         )
     except User.DoesNotExist:
         return Response({"error": "Utilisateur introuvable"}, status=404)
-    if request.user.username == username:
+    if request.user.is_authenticated and request.user.username == username:
         return Response(
             {"error": "Utilisez la route /mon-espace pour accéder à votre profil."},
             status=403,
