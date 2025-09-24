@@ -56,11 +56,9 @@ class UserViewSet(
         search = request.query_params.get("q", "")
         if not search:
             return Response([])
-        users = (
-            User.objects.filter(username__istartswith=search, is_active=True)
-            .exclude(is_staff=True)
-            .exclude(is_superuser=True)
-        )
+        users = User.objects.filter(
+            username__istartswith=search, is_active=True
+        ).exclude(is_staff=True, is_superuser=True)
         if request.user.is_authenticated:
             users = users.exclude(id=request.user.id)
         users = users[:10]
@@ -281,7 +279,9 @@ def get_user_by_username(request, username):
             status=403,
         )
     try:
-        user = User.objects.get(username=username)
+        user = User.objects.get(
+            username=username, is_active=True, is_staff=False, is_superuser=False
+        )
         serializer = UserPublicSerializer(user, context={"request": request})
         return Response(serializer.data, status=200)
     except User.DoesNotExist:
