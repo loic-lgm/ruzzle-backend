@@ -26,6 +26,13 @@ class UserSerializer(serializers.ModelSerializer):
             "created_at",
         ]
 
+    def validate_username(self, value):
+        if " " in value:
+            raise serializers.ValidationError(
+                {"error": "Le nom d'utilisateur ne peut pas contenir d'espaces."}
+            )
+        return value
+
 
 class UserRegistrationSerializer(UserSerializer):
     city_id = serializers.IntegerField(write_only=True, required=False)
