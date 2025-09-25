@@ -29,3 +29,13 @@ def send_activation_email(user, activation_link: str):
         context={"user": user, "activation_link": activation_link},
         plain_text=f"Salut {user.username},\nClique sur ce lien pour activer ton compte : {activation_link}",
     )
+
+
+def send_reset_password_email(user, reset_link: str):
+    return send_email(
+        subject="Réinitialisation de votre mot de passe sur Ruzzle",
+        to=[user.email],
+        template="emails/reset_password.html",
+        context={"user": user, "reset_link": reset_link},
+        plain_text=f"Salut {user.username},\nClique sur ce lien pour réinitialiser ton mot de passe : {reset_link}",
+    )

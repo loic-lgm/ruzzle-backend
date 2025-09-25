@@ -13,6 +13,14 @@ urlpatterns = [
     path("refresh/", views.refresh, name="refresh"),
     path("register/", views.register, name="register"),
     path("activate/<uidb64>/<token>/", views.activate_user, name="activate"),
+    path(
+        "forgot-password/",
+        views.forgot_password,
+        name="forgot-password",
+    ),
+    path(
+        "reset-password/<uidb64>/<token>/", views.reset_password, name="reset-password"
+    ),
     path("profile/<str:username>/", views.get_user_by_username, name="public-profile"),
     *router.urls,
 ]

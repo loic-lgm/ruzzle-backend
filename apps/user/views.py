@@ -20,7 +20,7 @@ from apps.exchange.models import Exchange
 from apps.exchange.serializers import ExchangeSerializer
 from apps.favorite.models import Favorite
 from apps.favorite.serializers import FavoriteSerializer
-from apps.user.utils import generate_activation_link
+from apps.user.utils import generate_activation_link, generate_forgot_password_link
 from apps.utils.authentication import CookieJWTAuthentication
 from apps.utils.permissions import IsOwnerParam
 from apps.user.models import User
@@ -29,7 +29,7 @@ from apps.user.serializers import (
     UserRegistrationSerializer,
     UserSerializer,
 )
-from apps.utils.send_email import send_activation_email
+from apps.utils.send_email import send_activation_email, send_reset_password_email
 
 
 class UserViewSet(
@@ -286,3 +286,47 @@ def get_user_by_username(request, username):
         )
     serializer = UserPublicSerializer(user, context={"request": request})
     return Response(serializer.data, status=200)
+
+
+@api_view(["POST"])
+def reset_password(request, uidb64, token):
+    new_password = request.data.get("password")
+    if not new_password:
+        return Response(
+            {"error": "Le nouveau mot de passe est requis."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        return Response({"error": "Lien invalide."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if default_token_generator.check_token(user, token):
+        user.set_password(new_password)
+        user.save()
+        return Response({"message": "Mot de passe réinitialisé avec succès !"})
+    else:
+        return Response(
+            {"error": "Lien invalide ou expiré."}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(["POST"])
+def forgot_password(request):
+    email = request.data.get("email")
+    if not email:
+        return Response(
+            {"error": "L'email est requis."}, status=status.HTTP_400_BAD_REQUEST
+        )
+    response_message = {
+        "message": "Si un compte existe avec cet email, un lien de réinitialisation a été envoyé."
+    }
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response(response_message, status=status.HTTP_200_OK)
+    reset_link = generate_forgot_password_link(user, request)
+    send_reset_password_email(user, reset_link)
+    return Response(response_message, status=status.HTTP_200_OK)
