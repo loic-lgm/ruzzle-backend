@@ -88,18 +88,15 @@ class PuzzleViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"])
     def random(self, request):
-        categories = list(Category.objects.all())
-        if not categories:
+        puzzles = list(Puzzle.objects.all())
+        if not puzzles:
             return Response([], status=status.HTTP_200_OK)
-        selected_categories = random.sample(categories, 4)
-        for category in selected_categories:
-            puzzles = list(Puzzle.objects.filter(category=category, is_published=True))
-            selected_puzzles = random.sample(puzzles, min(4, len(puzzles)))
+        selected_puzzles = random.sample(puzzles, min(4, len(puzzles)))
         return Response(
             PuzzleSerializer(
                 selected_puzzles, many=True, context={"request": request}
             ).data,
-            status=status.HTTP_201_CREATED,
+            status=status.HTTP_200_OK,
         )
 
     @action(
