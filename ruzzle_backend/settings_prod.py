@@ -59,6 +59,7 @@ LOGGING = {
 
 ALLOWED_HOSTS = ["api.ruzzle.fr", "ruzzle.alwaysdata.net"]
 
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://ruzzle.fr")
 
 # Application definition
 

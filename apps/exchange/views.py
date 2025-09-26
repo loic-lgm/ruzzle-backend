@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -8,6 +9,7 @@ from apps.exchange.serializers import ExchangeSerializer
 from apps.message.models import Conversation, Message
 from apps.notification.models import Notification
 from apps.puzzle.models import Puzzle
+from apps.utils.send_email import send_swap_accepted_email, send_swap_denied_email, send_swap_requested_email
 
 
 class ExchangeViewSet(
@@ -19,6 +21,7 @@ class ExchangeViewSet(
     queryset = Exchange.objects.all()
     serializer_class = ExchangeSerializer
     permission_classes = [permissions.IsAuthenticated]
+    frontend_url = settings.FRONTEND_URL
 
     def get_permissions(self):
         if self.action in ["retrieve", "update"]:
@@ -61,7 +64,7 @@ class ExchangeViewSet(
         if puzzle_proposed.owner != request.user:
             return Response(
                 {
-                    "error": "Vous ne pouvez proposer à l'échange qu'un puzzle vous apprtenant."
+                    "error": "Vous ne pouvez proposer à l'échange qu'un puzzle vous appartenant."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -81,6 +84,9 @@ class ExchangeViewSet(
         puzzle_proposed.status = "pending"
         puzzle_proposed.save()
 
+        send_swap_requested_email(
+            puzzle_asked.owner, f"{self.frontend_url}/mon-espace?tab=received"
+        )
         Notification.objects.create(
             user=puzzle_asked.owner, sender=request.user, notif_type="exchange_request"
         )
@@ -135,6 +141,9 @@ class ExchangeViewSet(
                 .exclude(id=instance.id)
                 .select_related("conversation")
             )
+            send_swap_accepted_email(
+                puzzle_proposed.owner, f"{self.frontend_url}/mon-espace?tab=completed"
+            )
             Notification.objects.create(
                 user=puzzle_proposed.owner,
                 sender=request.user,
@@ -184,6 +193,9 @@ class ExchangeViewSet(
                     if not is_in_other_exchange:
                         puzzle.status = "available"
                         puzzle.save()
+            send_swap_denied_email(
+                other_user, f"{self.frontend_url}/puzzles"
+            )
             Notification.objects.create(
                 user=other_user,
                 sender=request.user,

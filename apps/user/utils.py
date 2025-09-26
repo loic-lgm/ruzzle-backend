@@ -1,5 +1,6 @@
 import os
 
+from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
@@ -11,8 +12,7 @@ def generate_activation_link(user, request):
     """
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
-    frontend_url = os.environ.get("FRONTEND_URL")
-    link = f"{frontend_url}/activation/{uid}/{token}/"
+    link = f"{settings.FRONTEND_URL}/activation/{uid}/{token}/"
     return link
 
 
@@ -22,6 +22,5 @@ def generate_forgot_password_link(user, request=None):
     """
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
-    frontend_url = os.environ.get("FRONTEND_URL")
-    link = f"{frontend_url}/reset-password/{uid}/{token}/"
+    link = f"{settings.FRONTEND_URL}/reset-password/{uid}/{token}/"
     return link

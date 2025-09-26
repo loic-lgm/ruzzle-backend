@@ -93,25 +93,24 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <a href="https://ruzzle.fr" class="logo">
-        <img src="https://api.ruzzle.fr/media/ruzzle-logo.png" />
-      </a>
-      <h2>🎉 Bienvenue dans l’aventure, {{ user.username }} !</h2>
-      <p>
-        Merci de t’être inscrit sur <strong>Ruzzle</strong> 🧩 La grande
-        famille des passionnés de puzzles est ravie de t’accueillir 🤗 Pour
-        rejoindre la communauté, clique simplement sur le bouton ci-dessous 👇 :
-      </p>
+  <div class="container">
+    <a href="https://ruzzle.fr" class="logo">
+      <img src="https://api.ruzzle.fr/media/ruzzle-logo.png" />
+    </a>
+    <h2>🙁 Oh mince, {{ user.username }}…</h2>
+    <p>
+      Ta demande d’échange n’a pas été acceptée cette fois-ci 😅  
+      Pas d’inquiétude, la communauté <strong>Ruzzle</strong> 🧩 est pleine de passionnés prêts à échanger leurs puzzles 🤗  
+      Clique sur le bouton ci-dessous pour découvrir d’autres puzzles disponibles 👇
+    </p>
 
-      <a href="{{ activation_link }}" class="button-wrapper">
-        <span class="button-content">✨ Activer mon compte ✨</span>
-      </a>
+    <a href="{{ browse_link }}" class="button-wrapper">
+      <span class="button-content">🔍 Explorer d’autres puzzles</span>
+    </a>
 
-      <p class="footer">
-        😅 Tu n’es pas à l’origine de cette inscription ? Pas de souci, ignore
-        simplement ce message.
-      </p>
-    </div>
-  </body>
+    <p class="footer">
+      😅 Tu n’es pas à l’origine de cette action ? Pas de souci, ignore simplement ce message.
+    </p>
+  </div>
+</body>
 </html>
