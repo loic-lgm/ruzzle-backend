@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from apps.auth.serializers import RegisterSerializer
+from apps.authentication.serializers import RegisterSerializer
 from apps.user.serializers import UserSerializer
 from apps.utils.authentication import CookieJWTAuthentication
 from apps.user.utils import generate_activation_link, generate_forgot_password_link
@@ -17,7 +17,7 @@ from apps.utils.send_email import send_activation_email, send_reset_password_ema
 User = get_user_model()
 
 
-class AuthViewSet(viewsets.ViewSet):
+class AuthenticationViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
 
     @action(detail=False, methods=["post"], permission_classes=[AllowAny])
