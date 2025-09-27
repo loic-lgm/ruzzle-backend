@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "apps.rate",
     "apps.user",
     "apps.message",
+    "apps.auth",
     "apps.notification",
 ]
 
