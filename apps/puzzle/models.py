@@ -37,6 +37,8 @@ class Puzzle(models.Model):
     status = models.CharField(choices=STATUS_CHOICES, default="available")
     is_published = models.BooleanField(default=False)
     created = models.DateTimeField(default=timezone.now)
+    width = models.PositiveIntegerField(null=True, blank=True)
+    height = models.PositiveIntegerField(null=True, blank=True)
     brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name="puzzles", null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="puzzles", null=True, blank=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="puzzles")

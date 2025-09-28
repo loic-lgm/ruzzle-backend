@@ -32,6 +32,8 @@ class PuzzleSerializer(serializers.ModelSerializer):
             "image",
             "status",
             "is_published",
+            "width",
+            "height",
             "owner",
             "hashid",
             "created",
