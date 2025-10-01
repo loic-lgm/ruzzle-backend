@@ -8,7 +8,6 @@ from rest_framework.exceptions import NotFound
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from apps.category.models import Category
 from apps.exchange.models import Exchange
 from apps.utils.permissions import IsOwnerOrIsAdminOrReadOnly
 from apps.puzzle.models import Puzzle
@@ -77,7 +76,7 @@ class PuzzleViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        serializer.save(owner=self.request.user, is_published=True)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

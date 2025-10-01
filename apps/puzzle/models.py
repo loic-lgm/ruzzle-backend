@@ -39,8 +39,13 @@ class Puzzle(models.Model):
     created = models.DateTimeField(default=timezone.now)
     width = models.PositiveIntegerField(null=True, blank=True)
     height = models.PositiveIntegerField(null=True, blank=True)
-    brand = models.ForeignKey(Brand, on_delete=models.PROTECT, related_name="puzzles", null=True, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="puzzles", null=True, blank=True)
+    brand = models.ForeignKey(
+        Brand, on_delete=models.PROTECT, related_name="puzzles", null=True, blank=True
+    )
+    categories = models.ManyToManyField(Category, related_name="puzzles")
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, null=True, blank=True
+    )
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="puzzles")
 
     @property

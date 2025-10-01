@@ -4,7 +4,10 @@ from apps.category.models import Category
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("name",)
+    list_display = (
+        "id",
+        "name",
+    )
 
 
 admin.site.register(Category, CategoryAdmin)
