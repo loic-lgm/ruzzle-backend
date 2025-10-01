@@ -38,7 +38,7 @@ class PuzzleViewSet(viewsets.ModelViewSet):
         city_id = self.request.query_params.get("city")
         piece_range = self.request.query_params.get("pieceCount")
         if category_id:
-            queryset = queryset.filter(category_id=category_id)
+            queryset = queryset.filter(categories__id=category_id)
         if brand_id:
             queryset = queryset.filter(brand_id=brand_id)
         if city_id:
