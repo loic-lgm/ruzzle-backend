@@ -10,7 +10,7 @@ class Rate(models.Model):
     """
 
     rating = models.IntegerField()
-    comment = models.CharField(max_length=255)
+    comment = models.CharField(max_length=255, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="rates_given")
     reviewed = models.ForeignKey(User, on_delete=models.CASCADE, related_name="rates_received")

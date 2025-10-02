@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from apps.exchange.models import Exchange
 from apps.puzzle.serializers import PuzzleSerializer
 from apps.user.serializers import UserSerializer
+from apps.rate.models import Rate
 
 
 class ExchangeSerializer(serializers.ModelSerializer):
@@ -15,6 +16,7 @@ class ExchangeSerializer(serializers.ModelSerializer):
     message = serializers.CharField(required=False)
     requester = UserSerializer(read_only=True)
     conversation_id = serializers.SerializerMethodField()
+    has_voted = serializers.SerializerMethodField()
 
     class Meta:
         model = Exchange
@@ -29,7 +31,12 @@ class ExchangeSerializer(serializers.ModelSerializer):
             "message",
             "requester",
             "conversation_id",
+            "has_voted",
         ]
+
+    def get_has_voted(self, obj):
+        user = self.context["request"].user
+        return Rate.objects.filter(exchange=obj, owner=user).exists()
 
     def get_conversation_id(self, obj):
         try:
