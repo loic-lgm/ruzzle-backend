@@ -24,6 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
             "image",
             "city",
             "created_at",
+            "rating",
         ]
 
     def validate_username(self, value):

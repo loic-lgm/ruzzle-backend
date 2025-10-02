@@ -41,3 +41,11 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+    @property
+    def rating(self):
+        received = self.rates_received.all()
+        if not received.exists():
+            return 5
+        avg = sum(r.rating for r in received) / received.count()
+        return round(avg)
