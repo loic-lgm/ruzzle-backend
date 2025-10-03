@@ -10,6 +10,7 @@ class Notification(models.Model):
         ("new_message", "Nouveau message"),
         ("exchange_accepted", "Echange accepté"),
         ("exchange_denied", "Echange refusé"),
+        ("rating", "Évaluer l'échange"),
     ]
 
     user = models.ForeignKey(

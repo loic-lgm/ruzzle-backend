@@ -1,15 +1,20 @@
 from rest_framework import serializers
 
-from apps.exchange.serializers import ExchangeSerializer
+from apps.exchange.models import Exchange
 from apps.rate.models import Rate
+from apps.user.models import User
 from apps.user.serializers import UserSerializer
 
 
 class RateSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
-    reviewed = UserSerializer()
+    reviewed = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), write_only=True
+    )
     rating = serializers.IntegerField(min_value=0, max_value=5)
-    exchange = ExchangeSerializer(read_only=True)
+    exchange = serializers.PrimaryKeyRelatedField(
+        queryset=Exchange.objects.all(), write_only=True
+    )
 
     class Meta:
         model = Rate
@@ -24,7 +29,7 @@ class RateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Vous ne pouvez émettre un avis que sur un échange accepté."
             )
-        if user != exchange.requester and user != exchange.receiver:
+        if user != exchange.requester and user != exchange.owner:
             raise serializers.ValidationError(
                 "Vous n'êtes pas participant à cet échange."
             )

@@ -17,6 +17,7 @@ class ExchangeSerializer(serializers.ModelSerializer):
     requester = UserSerializer(read_only=True)
     conversation_id = serializers.SerializerMethodField()
     has_voted = serializers.SerializerMethodField()
+    rating_given = serializers.SerializerMethodField()
 
     class Meta:
         model = Exchange
@@ -32,7 +33,13 @@ class ExchangeSerializer(serializers.ModelSerializer):
             "requester",
             "conversation_id",
             "has_voted",
+            "rating_given",
         ]
+
+    def get_rating_given(self, obj):
+        user = self.context["request"].user
+        rate = Rate.objects.filter(exchange=obj, owner=user).first()
+        return rate.rating if rate else 0
 
     def get_has_voted(self, obj):
         user = self.context["request"].user
