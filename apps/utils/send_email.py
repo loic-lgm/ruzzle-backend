@@ -43,7 +43,7 @@ def send_swap_requested_email(user, swap_request_link: str):
         subject="Une demande d'échange t'as été proposée",
         to=[user.email],
         template="emails/swap_requested.html",
-        context={"user": user, "swap_link": swap_request_link},
+        context={"user": user, "swap_request_link": swap_request_link},
         plain_text=f"Salut {user.username},\nClique sur ce lien pour consulter tes demandes reçues : {swap_request_link}",
     )
 
