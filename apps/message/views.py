@@ -1,15 +1,16 @@
-from re import S
+from datetime import timedelta
+from django.db.models import Prefetch
+from django.utils import timezone
+
 from rest_framework import mixins, viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
-from django.db.models import Prefetch
-
 from apps.notification.models import Notification
 from apps.utils.authentication import CookieJWTAuthentication
-from .models import Conversation, Message
-from .serializers import ConversationSerializer, MessageSerializer
+from apps.message.models import Conversation, Message
+from apps.message.serializers import ConversationSerializer, MessageSerializer
 
 
 class ConversationViewSet(
@@ -20,9 +21,10 @@ class ConversationViewSet(
     authentication_classes = [CookieJWTAuthentication]
 
     def get_queryset(self):
-        return Conversation.objects.filter(participants=self.request.user).order_by(
-            "-updated"
-        )
+        one_month_ago = timezone.now() - timedelta(days=30)
+        return Conversation.objects.filter(
+            participants=self.request.user, updated__gte=one_month_ago
+        ).order_by("-updated")[:10]
 
 
 class MessageViewSet(
@@ -43,11 +45,11 @@ class MessageViewSet(
         conversation = serializer.validated_data["conversation"]
         if self.request.user not in conversation.participants.all():
             raise PermissionDenied(
-                "Vous ne pouvez pas envoyer de message dans cette conversation."
+                "Tu ne peux pas envoyer de message dans cette conversation."
             )
         if hasattr(conversation, "exchange") and conversation.exchange.status in ["denied", "accepted"]:
             raise PermissionDenied(
-                "Vous ne pouvez plus envoyer de messages car cet échange est terminé."
+                "Tu ne peux plus envoyer de messages car cet échange est terminé."
             )
         serializer.save(user=self.request.user)
         conversation.save(update_fields=["updated"])
