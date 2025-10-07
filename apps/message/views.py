@@ -45,6 +45,10 @@ class MessageViewSet(
             raise PermissionDenied(
                 "Vous ne pouvez pas envoyer de message dans cette conversation."
             )
+        if hasattr(conversation, "exchange") and conversation.exchange.status in ["denied", "accepted"]:
+            raise PermissionDenied(
+                "Vous ne pouvez plus envoyer de messages car cet échange est terminé."
+            )
         serializer.save(user=self.request.user)
         conversation.save(update_fields=["updated"])
         other_participant = conversation.participants.exclude(

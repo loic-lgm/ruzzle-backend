@@ -9,7 +9,11 @@ from apps.exchange.serializers import ExchangeSerializer
 from apps.message.models import Conversation, Message
 from apps.notification.models import Notification
 from apps.puzzle.models import Puzzle
-from apps.utils.send_email import send_swap_accepted_email, send_swap_denied_email, send_swap_requested_email
+from apps.utils.send_email import (
+    send_swap_accepted_email,
+    send_swap_denied_email,
+    send_swap_requested_email,
+)
 
 
 class ExchangeViewSet(
@@ -116,6 +120,11 @@ class ExchangeViewSet(
         instance = self.get_object()
         old_status = instance.status
         conversation = instance.conversation
+        if old_status in ["denied", "accepted"]:
+            return Response(
+                {"error": "Cet échange est déjà terminé et ne peut plus être modifié."},
+                status=400,
+            )
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
@@ -200,9 +209,7 @@ class ExchangeViewSet(
                     if not is_in_other_exchange:
                         puzzle.status = "available"
                         puzzle.save()
-            send_swap_denied_email(
-                other_user, f"{self.frontend_url}/puzzles"
-            )
+            send_swap_denied_email(other_user, f"{self.frontend_url}/puzzles")
             Notification.objects.create(
                 user=other_user,
                 sender=request.user,
