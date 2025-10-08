@@ -1,10 +1,7 @@
-from multiprocessing import context
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from apps.city.models import City
 from apps.city.serializers import CitySerializer
-from apps.utils.validations import validate_image
 
 
 User = get_user_model()
