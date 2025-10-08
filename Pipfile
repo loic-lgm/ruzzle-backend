@@ -12,6 +12,7 @@ djangorestframework-simplejwt = "*"
 pillow = "*"
 django-cors-headers = "*"
 hashids = "*"
+pillow-heif = "*"
 
 [dev-packages]
 

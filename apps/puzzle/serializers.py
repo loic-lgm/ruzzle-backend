@@ -89,7 +89,10 @@ class PuzzleSerializer(serializers.ModelSerializer):
         return attrs
 
     def validate_image(self, value):
-        return validate_image(value, serializers=self)
+        try:
+            return validate_image(value)
+        except ValueError as e:
+            raise serializers.ValidationError(str(e))
 
     def create(self, validated_data):
         brand_input = validated_data.pop("brand_input")
