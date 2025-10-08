@@ -6,7 +6,7 @@ from apps.brand.serializers import BrandSerializer
 from apps.category.serializers import CategorySerializer
 from apps.puzzle.models import Puzzle
 from apps.user.serializers import UserSerializer
-from apps.utils.validations import validate_image
+from apps.utils.validations import process_image, validate_image
 
 
 class PuzzleSerializer(serializers.ModelSerializer):
@@ -90,7 +90,7 @@ class PuzzleSerializer(serializers.ModelSerializer):
 
     def validate_image(self, value):
         try:
-            return validate_image(value)
+            return process_image(value)
         except ValueError as e:
             raise serializers.ValidationError(str(e))
 
