@@ -17,7 +17,7 @@ class Puzzle(models.Model):
     """
 
     CONDITION_CHOICES = [
-        ("new", "available"),
+        ("new", "new"),
         ("used", "used"),
         ("damaged", "damaged"),
     ]
