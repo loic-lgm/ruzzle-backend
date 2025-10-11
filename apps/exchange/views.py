@@ -10,7 +10,7 @@ from apps.message.models import Conversation, Message
 from apps.notification.models import Notification
 from apps.puzzle.models import Puzzle
 from apps.utils.send_email import (
-    send_swap_accepted_email,
+    send_swap_terminated_email,
     send_swap_denied_email,
     send_swap_requested_email,
 )
@@ -150,8 +150,10 @@ class ExchangeViewSet(
                 .exclude(id=instance.id)
                 .select_related("conversation")
             )
-            send_swap_accepted_email(
-                puzzle_proposed.owner, f"{self.frontend_url}/mon-espace?tab=completed"
+            send_swap_terminated_email(
+                puzzle_proposed.owner,
+                f"{self.frontend_url}/mon-espace?tab=completed",
+                puzzle_asked.owner,
             )
             Notification.objects.create(
                 user=puzzle_proposed.owner,

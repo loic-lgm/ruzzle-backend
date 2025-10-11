@@ -1,6 +1,7 @@
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
+
 def send_email(
     subject: str,
     to: list[str],
@@ -20,7 +21,8 @@ def send_email(
     email.attach_alternative(html_content, "text/html")
     email.send()
 
-def send_activation_email(user, activation_link: str):
+
+def send_activation_email(user, activation_link: str, other_user):
     return send_email(
         subject="Active ton compte sur Ruzzle",
         to=[user.email],
@@ -28,6 +30,7 @@ def send_activation_email(user, activation_link: str):
         context={"user": user, "activation_link": activation_link},
         plain_text=f"Salut {user.username},\nClique sur ce lien pour activer ton compte : {activation_link}",
     )
+
 
 def send_reset_password_email(user, reset_link: str):
     return send_email(
@@ -38,6 +41,7 @@ def send_reset_password_email(user, reset_link: str):
         plain_text=f"Salut {user.username},\nClique sur ce lien pour réinitialiser ton mot de passe : {reset_link}",
     )
 
+
 def send_swap_requested_email(user, swap_request_link: str):
     return send_email(
         subject="Une demande d'échange t'as été proposée",
@@ -47,13 +51,18 @@ def send_swap_requested_email(user, swap_request_link: str):
         plain_text=f"Salut {user.username},\nClique sur ce lien pour consulter tes demandes reçues : {swap_request_link}",
     )
 
-def send_swap_accepted_email(user, swap_accepted_link: str):
+
+def send_swap_terminated_email(user, swap_terminated_link: str, other_user):
     return send_email(
         subject="Ta demande d'échange a été acceptée",
         to=[user.email],
-        template="emails/swap_accepted.html",
-        context={"user": user, "swap_accepted_link": swap_accepted_link},
-        plain_text=f"Salut {user.username},\nClique sur ce lien pour consulter tes demandes acceptées : {swap_accepted_link}",
+        template="emails/swap_terminated.html",
+        context={
+            "user": user,
+            "swap_terminated_link": swap_terminated_link,
+            "other_user": other_user,
+        },
+        plain_text=f"Salut {user.username},\nClique sur ce lien pour consulter tes demandes terminées : {swap_terminated_link}",
     )
 
 

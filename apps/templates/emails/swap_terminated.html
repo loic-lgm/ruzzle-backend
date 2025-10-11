@@ -99,16 +99,18 @@
       </a>
       <h2>🎉 Bonne nouvelle, {{ user.username }} !</h2>
       <p>
-        Super, ta demande d’échange a été <strong>acceptée</strong> 🎊 Un
-        membre de la communauté <strong>Ruzzle</strong> 🧩 est prêt à échanger un
-        puzzle avec toi 🤗 Clique sur le bouton ci-dessous pour découvrir les
-        détails de l’échange et finaliser tout ça 👇
+        Ton échange avec <strong>{{ other_user.username }}</strong> s’est bien
+        déroulé 🙌 Le puzzle a été retiré de ta liste, et tout est maintenant à
+        jour dans ton espace et la conversation liée est close. <strong>Ruzzle</strong> 🧩
       </p>
-
-      <a href="{{ swap_accepted_link }}" class="button-wrapper">
-        <span class="button-content">📬 Voir l’échange</span>
+      <p>
+        Merci d’avoir contribué à faire tourner les puzzles dans la communauté —
+        c’est grâce à des membres comme toi que <strong>Ruzzle</strong> vit et
+        grandit 💛
+      </p>
+      <a href="{{ swap_terminated_link }}" class="button-wrapper">
+        <span class="button-content">📬 Voir les détails de l’échange</span>
       </a>
-
       <p class="footer">
         😅 Tu n’es pas à l’origine de cette action ? Pas de souci, ignore
         simplement ce message.
