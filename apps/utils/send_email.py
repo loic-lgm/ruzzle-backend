@@ -22,7 +22,7 @@ def send_email(
     email.send()
 
 
-def send_activation_email(user, activation_link: str, other_user):
+def send_activation_email(user, activation_link: str):
     return send_email(
         subject="Active ton compte sur Ruzzle",
         to=[user.email],

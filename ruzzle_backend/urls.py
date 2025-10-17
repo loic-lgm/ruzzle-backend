@@ -32,6 +32,7 @@ urlpatterns = [
     path("puzzles/", include("apps.puzzle.urls"), name="puzzles"),
     path("rates/", include("apps.rate.urls"), name="rates"),
     path("users/", include("apps.user.urls"), name="users"),
+    path("search/", include("apps.search.urls"), name="search"),
     path("notifications/", include("apps.notification.urls"), name="notifications"),
     path("messages/", include("apps.message.urls"), name="messages"),
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),

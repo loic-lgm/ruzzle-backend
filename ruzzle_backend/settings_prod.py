@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     "apps.message",
     "apps.authentication",
     "apps.notification",
+    "apps.search",
 ]
 
 MIDDLEWARE = [
