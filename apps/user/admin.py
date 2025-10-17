@@ -4,7 +4,19 @@ from django.contrib.auth.admin import UserAdmin
 from apps.user.models import User
 
 class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'image', 'city', 'is_staff', 'is_active', 'created_at')
+    list_display = (
+        "username",
+        "email",
+        "image",
+        "city",
+        "latitude",
+        "longitude",
+        "postal_code",
+        "city_name",
+        "is_staff",
+        "is_active",
+        "created_at",
+    )
     fieldsets = UserAdmin.fieldsets + (
         ("Informations supplémentaires", {"fields": ("image", "city")}),
     )
