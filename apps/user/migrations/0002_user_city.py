@@ -7,15 +7,10 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('city', '0001_initial'),
-        ('user', '0001_initial'),
+        # This migration is empty because a City app existed before
+        # It is now deleted, the migration is remaining
+        # in order to not break the graph,
+        ("user", "0001_initial"),
     ]
 
-    operations = [
-        migrations.AddField(
-            model_name='user',
-            name='city',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='users', to='city.city', null=True, blank=True),
-            preserve_default=False,
-        ),
-    ]
+    operations = []

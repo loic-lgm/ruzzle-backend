@@ -76,7 +76,6 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "apps.brand",
     "apps.category",
-    "apps.city",
     "apps.exchange",
     "apps.favorite",
     "apps.puzzle",
