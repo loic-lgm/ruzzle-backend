@@ -7,7 +7,14 @@ User = get_user_model()
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    city_id = serializers.IntegerField(write_only=True, required=False)
+    city_name = serializers.CharField(write_only=True, required=False)
+    postal_code = serializers.CharField(write_only=True, required=False)
+    latitude = serializers.DecimalField(
+        max_digits=9, decimal_places=6, write_only=True, required=False
+    )
+    longitude = serializers.DecimalField(
+        max_digits=9, decimal_places=6, write_only=True, required=False
+    )
 
     class Meta:
         model = User
@@ -19,8 +26,10 @@ class RegisterSerializer(serializers.ModelSerializer):
             "last_name",
             "password",
             "image",
-            "city",
-            "city_id",
+            "city_name",
+            "postal_code",
+            "latitude",
+            "longitude",
         ]
         extra_kwargs = {
             "password": {"write_only": True},
@@ -45,20 +54,17 @@ class RegisterSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        city = None
-        city_id = validated_data.pop("city_id", None)
-        if city_id:
-            try:
-                city = City.objects.get(id=city_id)
-            except City.DoesNotExist:
-                raise serializers.ValidationError(
-                    {"city_id": "La ville spécifiée n'existe pas."}
-                )
-
+        city_name = validated_data.pop("city_name", None)
+        postal_code = validated_data.pop("postal_code", None)
+        latitude = validated_data.pop("latitude", None)
+        longitude = validated_data.pop("longitude", None)
         password = validated_data.pop("password")
         new_user = User.objects.create(
             **validated_data,
-            city=city,
+            city_name=city_name,
+            postal_code=postal_code,
+            latitude=latitude,
+            longitude=longitude,
             is_active=False,
         )
         new_user.set_password(password)
