@@ -26,7 +26,6 @@ urlpatterns = [
     path("auth/", include("apps.authentication.urls"), name="authentication"),
     path("brands/", include("apps.brand.urls"), name="brands"),
     path("categories/", include("apps.category.urls"), name="categories"),
-    path("cities/", include("apps.city.urls"), name="cities"),
     path("exchanges/", include("apps.exchange.urls"), name="exchanges"),
     path("favorites/", include("apps.favorite.urls"), name="favorites"),
     path("puzzles/", include("apps.puzzle.urls"), name="puzzles"),

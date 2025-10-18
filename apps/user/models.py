@@ -2,8 +2,6 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
 
-from apps.city.models import City
-
 
 class CustomUserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
@@ -34,9 +32,6 @@ class User(AbstractUser):
     postal_code = models.CharField(max_length=10, blank=True, null=True)
     latitude = models.DecimalField(max_digits=10, decimal_places=8, null=True, blank=True)
     longitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
-    city = models.ForeignKey(
-        City, on_delete=models.PROTECT, related_name="users", null=True, blank=True
-    )
 
     objects = CustomUserManager()
 

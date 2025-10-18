@@ -1,15 +1,11 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from apps.city.serializers import CitySerializer
-
 
 User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    city = CitySerializer(read_only=True)
-
     class Meta:
         model = User
         fields = [
@@ -19,7 +15,6 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "image",
-            "city",
             'latitude',
             'longitude',
             'postal_code',

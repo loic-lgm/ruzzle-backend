@@ -9,7 +9,6 @@ class CustomUserAdmin(UserAdmin):
         "username",
         "email",
         "image",
-        "city",
         "latitude",
         "longitude",
         "postal_code",
@@ -24,7 +23,6 @@ class CustomUserAdmin(UserAdmin):
             {
                 "fields": (
                     "image",
-                    "city",
                     "latitude",
                     "longitude",
                     "postal_code",
@@ -39,7 +37,6 @@ class CustomUserAdmin(UserAdmin):
             {
                 "fields": (
                     "image",
-                    "city",
                     "latitude",
                     "longitude",
                     "postal_code",
