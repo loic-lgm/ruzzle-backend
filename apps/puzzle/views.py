@@ -1,3 +1,4 @@
+from math import cos, radians
 import random
 
 from django.db.models import Q
@@ -35,14 +36,29 @@ class PuzzleViewSet(viewsets.ModelViewSet):
         queryset = queryset.exclude(status__in=["swapped", "deleted"])
         category_id = self.request.query_params.get("category")
         brand_id = self.request.query_params.get("brand")
-        city_id = self.request.query_params.get("city")
+        latitude = self.request.query_params.get("latitude")
+        longitude = self.request.query_params.get("longitude")
+        radius = self.request.query_params.get("radius")
         piece_range = self.request.query_params.get("pieceCount")
         if category_id:
             queryset = queryset.filter(categories__id=category_id)
         if brand_id:
             queryset = queryset.filter(brand_id=brand_id)
-        if city_id:
-            queryset = queryset.filter(owner__city_id=city_id)
+        if latitude and longitude and radius:
+            lat = float(latitude)
+            lon = float(longitude)
+            rad = float(radius)
+            lat_min = lat - rad / 111
+            lat_max = lat + rad / 111
+            lon_min = lon - rad / (111 * cos(radians(lat)))
+            lon_max = lon + rad / (111 * cos(radians(lat)))
+
+            queryset = queryset.filter(
+                owner__latitude__gte=lat_min,
+                owner__latitude__lte=lat_max,
+                owner__longitude__gte=lon_min,
+                owner__longitude__lte=lon_max,
+            )
         if piece_range:
             if piece_range == "-500":
                 queryset = queryset.filter(piece_count__lt=500)

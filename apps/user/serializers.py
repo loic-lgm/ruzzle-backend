@@ -20,6 +20,10 @@ class UserSerializer(serializers.ModelSerializer):
             "last_name",
             "image",
             "city",
+            'latitude',
+            'longitude',
+            'postal_code',
+            'city_name',
             "created_at",
             "rating",
         ]
@@ -40,7 +44,8 @@ class UserPublicSerializer(UserSerializer):
             "id",
             "username",
             "image",
-            "city",
+            "city_name",
+            "postal_code",
             "puzzles",
             "created_at",
         ]
