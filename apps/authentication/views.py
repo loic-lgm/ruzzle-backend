@@ -1,3 +1,5 @@
+from django.db import connection
+import time
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
@@ -159,8 +161,22 @@ class AuthenticationViewSet(viewsets.ViewSet):
         permission_classes=[IsAuthenticated],
     )
     def me(self, request):
-        serializer = UserSerializer(request.user, context={"request": request})
-        return Response(serializer.data, status=200)
+        start_total = time.time()
+        start_auth = time.time()
+        user = request.user
+        auth_duration = time.time() - start_auth
+
+        start_ser = time.time()
+        data = UserSerializer(user, context={"request": request}).data
+        ser_duration = time.time() - start_ser
+
+        total_duration = time.time() - start_total
+
+        print(
+                f"/auth/me total={total_duration:.2f}s auth={auth_duration:.2f}s serialize={ser_duration:.2f}s "
+                f"queries={len(connection.queries)}"
+            )
+        return Response(data, status=200)
 
     @action(
         detail=False,
