@@ -12,7 +12,7 @@ except ImportError:
 
 def process_image(
     image_file,
-    max_width=500,
+    max_width=800,
     max_height=800,
     max_size=5 * 1024 * 1024,
     allowed_formats=("JPEG", "PNG", "WEBP", "HEIC", "HEIF", "AVIF"),
@@ -31,13 +31,9 @@ def process_image(
             f"Formats autorisés : {allowed_formats}."
         )
     image = image.convert("RGB")
-    format_to_use = "JPEG"
-    file_ext = "jpg"
     if image.width > max_width or image.height > max_height:
-        image.thumbnail((max_width, max_height))
+        image.thumbnail((max_width, max_height), PilImage.Resampling.LANCZOS)
     buffer = BytesIO()
-    image.save(buffer, format=format_to_use, quality=85, optimize=True)
-    file_ext = "jpg" if format_to_use == "JPEG" else "png"
-    filename = f"{image_file.name.rsplit('.', 1)[0]}.{file_ext}"
-
+    image.save(buffer, format="JPEG", quality=85, optimize=True)
+    filename = f"{image_file.name.rsplit('.', 1)[0]}.jpg"
     return ContentFile(buffer.getvalue(), name=filename)
