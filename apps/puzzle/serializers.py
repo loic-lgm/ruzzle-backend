@@ -5,12 +5,12 @@ from apps.brand.models import Brand
 from apps.brand.serializers import BrandSerializer
 from apps.category.serializers import CategorySerializer
 from apps.puzzle.models import Puzzle
-from apps.user.serializers import UserSerializer
+from apps.user.serializers import UserMinimalSerializer
 from apps.utils.validations import process_image
 
 
 class PuzzleSerializer(serializers.ModelSerializer):
-    owner = UserSerializer(read_only=True)
+    owner = UserMinimalSerializer(read_only=True)
     categories = CategorySerializer(read_only=True, many=True)
     category_inputs = serializers.ListField(
         child=serializers.JSONField(), write_only=True

@@ -29,6 +29,11 @@ class UserSerializer(serializers.ModelSerializer):
                 {"error": "Le nom d'utilisateur ne peut pas contenir d'espaces."}
             )
         return value
+    
+class UserMinimalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "city_name"]
 
 class UserPublicSerializer(UserSerializer):
     puzzles = serializers.SerializerMethodField()
