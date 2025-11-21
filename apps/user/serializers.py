@@ -33,7 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "city_name"]
+        fields = ["id", "username", "city_name", "image"]
 
 class UserPublicSerializer(UserSerializer):
     puzzles = serializers.SerializerMethodField()
