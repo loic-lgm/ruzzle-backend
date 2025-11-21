@@ -1,4 +1,5 @@
 from datetime import timedelta
+from django.conf import settings
 from django.db.models import Prefetch
 from django.utils import timezone
 
@@ -11,6 +12,7 @@ from apps.notification.models import Notification
 from apps.utils.authentication import CookieJWTAuthentication
 from apps.message.models import Conversation, Message
 from apps.message.serializers import ConversationSerializer, MessageSerializer
+from apps.utils.send_email import send_new_messages
 
 
 class ConversationViewSet(
@@ -35,6 +37,7 @@ class MessageViewSet(
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [CookieJWTAuthentication]
+    frontend_url = settings.FRONTEND_URL
 
     def get_queryset(self):
         return Message.objects.filter(
@@ -57,6 +60,11 @@ class MessageViewSet(
             id=self.request.user.id
         ).first()
         if other_participant:
+            send_new_messages(
+                user=other_participant,
+                messages_link=f"{self.frontend_url}/mon-espace?tab=messages",
+                sender_username=self.request.user.username
+            )
             Notification.objects.create(
                 user=other_participant,
                 sender=self.request.user,

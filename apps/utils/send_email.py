@@ -74,3 +74,17 @@ def send_swap_denied_email(user, browse_link: str):
         context={"user": user, "browse_link": browse_link},
         plain_text=f"Salut {user.username},\nClique sur ce lien pour consulter les autres puzzles : {browse_link}",
     )
+
+
+def send_new_messages(user, messages_link: str, sender_username: str):
+    return send_email(
+        subject="Tu as reçu un nouveau message",
+        to=[user.email],
+        template="emails/new_message.html",
+        context={
+            "user": user,
+            "messages_link": messages_link,
+            "sender_username": sender_username,
+        },
+        plain_text=f"Salut {user.username},\nClique sur ce lien pour tes messages : {messages_link}",
+    )
